@@ -12,7 +12,8 @@ import axios from 'axios';
 
 const numColumns = 3;
 const token = ''
-const ip = '192.168.0.17'
+// const ip = '192.168.0.17:3001'
+const ip = 'limitless-lowlands-68334.herokuapp.com'
 
 export default function Abertas (props){
     const [eachCliente,setEachCliente] = useState("")
@@ -39,7 +40,7 @@ export default function Abertas (props){
     },[props.refresh])
 
 const getClientes = ()=>{
-        axios.get(`http://${ip}:3001/todosClientesAbertos`, {
+        axios.get(`http://${ip}/todosClientesAbertos`, {
         }).then((res) => {
           const obj = []
             const arrClientes = res.data
@@ -53,7 +54,7 @@ const getClientes = ()=>{
 const getComandaCliente =(cliente)=>{
     console.log('getComandacliente')
   
-    axios.get(`http://${ip}:3001/comandaCliente`, {
+    axios.get(`http://${ip}/comandaCliente`, {
         params: {
         cliente: cliente,
         // token: token,
@@ -79,7 +80,7 @@ const  popUpComanda = (cliente) =>{
     getComandaCliente(cliente)
     const token = '' 
     setModalVisible(!modalVisible)
-      axios.get(`http://${ip}:3001/comandaCliente`, {
+      axios.get(`http://${ip}/comandaCliente`, {
         // body da req deve conter nome do cliente: nome e token: "TOKEN"
         params: {
           cliente: cliente,
@@ -120,7 +121,7 @@ const formatData = (data, numColumns) => {
 
   const updateQuantidade = (id, quantidade) =>{
     
-    axios.post(`http://${ip}:3001/updateQuantidade`, {
+    axios.post(`http://${ip}/updateQuantidade`, {
       quantidade:quantidade,
       id:id,
       token: token
@@ -186,7 +187,7 @@ const addPeloTextInput = () =>{
   console.log(cliente, novoProduto)
   setColorButtonTextInput('green')
   
-  axios.post(`http://${ip}:3001/addToComanda`, {
+  axios.post(`http://${ip}/addToComanda`, {
     cliente: cliente,
     nomeproduto:novoProduto,
     quantidade:1
@@ -211,7 +212,7 @@ const pagarAConta = () =>{
   setColor('green')
   function encerraComanda (cadaid) {
 
-      axios.post(`http://${ip}:3001/encerrarComanda`, {
+      axios.post(`http://${ip}/encerrarComanda`, {
         cliente:cliente,
         pagamento:formaDePagamento,
         id:cadaid

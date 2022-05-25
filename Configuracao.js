@@ -3,7 +3,8 @@ import { useState,useEffect } from 'react'
 import { BottomTabBar } from '@react-navigation/bottom-tabs'
 import axios from 'axios'
 
-const ip ='192.168.0.17'
+// const ip ='192.168.0.17:3001'
+const ip = "limitless-lowlands-68334.herokuapp.com"
 const numColumns=3
 const headerWidthSize = Dimensions.get('window').width*0.755
 
@@ -120,7 +121,7 @@ function AddProductModal (props) {
     },[])
 
     const getProdutos =() =>{
-      axios.get(`http://${ip}:3001/allProducts`, {
+      axios.get(`http://${ip}/allProducts`, {
       }).then((res) => {
         const obj = []
           const arrAllProducts = res.data.nomeproduto
@@ -139,7 +140,7 @@ function AddProductModal (props) {
 
     const addNovoProdutoAoBanco =() =>{
       console.log(novoProduto, preco, "novo Produto e preco")
-      axios.post(`http://${ip}:3001/addProduct`, {
+      axios.post(`http://${ip}/addProduct`, {
         nomeproduto:novoProduto,
         preco:preco
       }).then(function (response) {
@@ -580,7 +581,7 @@ function TodosPedidosModal (props) {
 
 
   const getTodosPedidosPorId =() =>{
-    axios.get(`http://${ip}:3001/todosPedidosPorId`, {
+    axios.get(`http://${ip}/todosPedidosPorId`, {
     }).then((res) => {
       const obj = []
       res.data.id.forEach((e,i, res)=>{

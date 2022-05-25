@@ -1,4 +1,3 @@
-
 import { StyleSheet, Text, View, Button, TouchableOpacity, Dimensions, Modal, Pressable, TextInput  } from 'react-native';
 import LoginScreen from './loginPage';
 import { NavigationContainer } from '@react-navigation/native';
@@ -10,7 +9,8 @@ import Configuracao from './Configuracao';
 import Abertas from './Abertas';
 import Fechadas from './Fechadas';
 
-const ip = '192.168.0.17'
+// const ip = '192.168.0.17:3001' // meu ip
+const ip = 'limitless-lowlands-68334.herokuapp.com' 
 const DeviceWidth =  Dimensions.get('window').width
 const numColumns = 3
 
@@ -254,7 +254,7 @@ const addClientePopUp = () =>{
 const adicionarNovoCliente = () =>{
   setColor("green")
 
-    axios.post(`http://${ip}:3001/addToComanda`, {
+    axios.post(`http://${ip}/addToComanda`, {
       cliente:novoCliente,
       quantidade:quantidade,
       nomeproduto:produto,
