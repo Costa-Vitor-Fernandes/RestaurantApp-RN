@@ -40,7 +40,7 @@ export default function Abertas (props){
     },[props.refresh])
 
 const getClientes = ()=>{
-        axios.get(`http://${ip}/todosClientesAbertos`, {
+        axios.get(`https://${ip}/todosClientesAbertos`, {
         }).then((res) => {
           const obj = []
             const arrClientes = res.data
@@ -54,7 +54,7 @@ const getClientes = ()=>{
 const getComandaCliente =(cliente)=>{
     console.log('getComandacliente')
   
-    axios.get(`http://${ip}/comandaCliente`, {
+    axios.get(`https://${ip}/comandaCliente`, {
         params: {
         cliente: cliente,
         // token: token,
@@ -80,7 +80,7 @@ const  popUpComanda = (cliente) =>{
     getComandaCliente(cliente)
     const token = '' 
     setModalVisible(!modalVisible)
-      axios.get(`http://${ip}/comandaCliente`, {
+      axios.get(`https://${ip}/comandaCliente`, {
         // body da req deve conter nome do cliente: nome e token: "TOKEN"
         params: {
           cliente: cliente,
@@ -121,7 +121,7 @@ const formatData = (data, numColumns) => {
 
   const updateQuantidade = (id, quantidade) =>{
     
-    axios.post(`http://${ip}/updateQuantidade`, {
+    axios.post(`https://${ip}/updateQuantidade`, {
       quantidade:quantidade,
       id:id,
       token: token
@@ -187,7 +187,7 @@ const addPeloTextInput = () =>{
   console.log(cliente, novoProduto)
   setColorButtonTextInput('green')
   
-  axios.post(`http://${ip}/addToComanda`, {
+  axios.post(`https://${ip}/addToComanda`, {
     cliente: cliente,
     nomeproduto:novoProduto,
     quantidade:1
@@ -212,7 +212,7 @@ const pagarAConta = () =>{
   setColor('green')
   function encerraComanda (cadaid) {
 
-      axios.post(`http://${ip}/encerrarComanda`, {
+      axios.post(`https://${ip}/encerrarComanda`, {
         cliente:cliente,
         pagamento:formaDePagamento,
         id:cadaid

@@ -121,7 +121,7 @@ function AddProductModal (props) {
     },[])
 
     const getProdutos =() =>{
-      axios.get(`http://${ip}/allProducts`, {
+      axios.get(`https://${ip}/allProducts`, {
       }).then((res) => {
         const obj = []
           const arrAllProducts = res.data.nomeproduto
@@ -140,7 +140,7 @@ function AddProductModal (props) {
 
     const addNovoProdutoAoBanco =() =>{
       console.log(novoProduto, preco, "novo Produto e preco")
-      axios.post(`http://${ip}/addProduct`, {
+      axios.post(`https://${ip}/addProduct`, {
         nomeproduto:novoProduto,
         preco:preco
       }).then(function (response) {
@@ -581,7 +581,7 @@ function TodosPedidosModal (props) {
 
 
   const getTodosPedidosPorId =() =>{
-    axios.get(`http://${ip}/todosPedidosPorId`, {
+    axios.get(`https://${ip}/todosPedidosPorId`, {
     }).then((res) => {
       const obj = []
       res.data.id.forEach((e,i, res)=>{

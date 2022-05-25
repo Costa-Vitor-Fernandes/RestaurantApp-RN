@@ -222,7 +222,7 @@ export default function Fechadas (props) {
     },[props.refresh])
 
 const getClientesFechados = ()=>{
-        axios.get(`http://${ip}/todosClientesFechados`, {
+        axios.get(`https://${ip}/todosClientesFechados`, {
         }).then((res) => {
           const obj = []
             const arrClientes = res.data
@@ -236,7 +236,7 @@ const getClientesFechados = ()=>{
 const getComandaClienteFechado =(cliente)=>{
     console.log('getComandacliente')
   
-    axios.get(`http://${ip}/comandaFechadaCliente`, {
+    axios.get(`https://${ip}/comandaFechadaCliente`, {
         params: {
         cliente: cliente,
         // token: token,
@@ -263,7 +263,7 @@ const  popUpComanda = (cliente) =>{
     getComandaClienteFechado(cliente)
     const token = '' 
     setModalVisible(!modalVisible)
-      axios.get(`http://${ip}/comandaFechadaCliente`, {
+      axios.get(`https://${ip}/comandaFechadaCliente`, {
         // body da req deve conter nome do cliente: nome e token: "TOKEN"
         params: {
           cliente: cliente,

@@ -254,7 +254,7 @@ const addClientePopUp = () =>{
 const adicionarNovoCliente = () =>{
   setColor("green")
 
-    axios.post(`http://${ip}/addToComanda`, {
+    axios.post(`https://${ip}/addToComanda`, {
       cliente:novoCliente,
       quantidade:quantidade,
       nomeproduto:produto,
