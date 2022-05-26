@@ -232,7 +232,7 @@ setTimeout(()=>{
 }
 const pagarAConta = () =>{
 
-  if(formaDePagamento === 'Selecione uma forma de Pagamento'){
+  if(formaDePagamento === 'Selecione uma forma de Pagamento' || formaDePagamento === ""){
     setColor("red")
     alert('voce nao escolheu uma forma de pagamento')
     setTimeout(()=>{
@@ -378,7 +378,9 @@ const headerWidthSize = Dimensions.get('window').width*0.755
                 setIdOndeMudou([])
                 setQuantidade("")
                 setPreco('')
-                setModalVisible(!modalVisible)  
+                setModalVisible(!modalVisible)
+                setFormaDePagamento('')
+                setSelectedProduct("")
                 }}
               >
                 <Text style={styles.textStyle}>Voltar</Text>
