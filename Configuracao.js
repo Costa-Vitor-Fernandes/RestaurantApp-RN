@@ -1,3 +1,4 @@
+import {Picker} from '@react-native-picker/picker';
 import {View, Text,Button, StyleSheet, TouchableOpacity, Dimensions,Modal,TextInput, ScrollView} from 'react-native'
 import { useState,useEffect } from 'react'
 import { BottomTabBar } from '@react-navigation/bottom-tabs'
@@ -10,6 +11,7 @@ const headerWidthSize = Dimensions.get('window').width*0.755
 
 export default function Configuracao (){
 
+  const [selectedProduct, setSelectedProduct] = useState();
   const [exportModal,setExportModal]= useState(false)
   const [addProdutosModal,setAddProdutosModal]= useState(false)
   const [alterPrecoModal, setAlterPrecoModal]= useState(false)
@@ -34,6 +36,34 @@ export default function Configuracao (){
     },
     
   })
+//  async function ProductPicker () {
+  
+
+//   const obj = []
+//   await axios.get(`https://${ip}/allProducts`).then(async function (res) {
+//     const arrAllProducts = res.data.nomeproduto
+//     // await arrAllProducts.forEach((e,i,res)=>{
+//     //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
+//     // })
+//     obj.push(arrAllProducts.map((r)=>{
+//       return (<Picker.Item label={r} value={r}></Picker.Item>)
+//     }))
+//     }).catch(error => console.log(error));
+
+    
+//       return(
+//         <Picker
+//         selectedValue={selectedProduct}
+//         onValueChange={(itemValue, itemIndex) =>
+//           setSelectedProduct(itemValue)
+//         }>
+//         {obj}
+//       </Picker>
+//       )   
+    
+
+//     }
+
 
   const exporter = (opt) =>{
     setExportModal(opt)
@@ -98,10 +128,9 @@ setDeleteProdutotModal(del)
           {/* EXPORT MODAL */}
       </View>
     )
-
-
   }
 
+ 
 
 
 

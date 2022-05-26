@@ -8,6 +8,7 @@ import {
  TouchableOpacity,
  FlatList, Modal, Pressable, ScrollView
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import axios from 'axios';
 
 const numColumns = 3;
@@ -16,6 +17,11 @@ const token = ''
 const ip = 'limitless-lowlands-68334.herokuapp.com'
 
 export default function Abertas (props){
+
+    const [allProducts,setAllProducts] = useState('')
+    const [allPagamentos, setAllPagamentos] = useState(['Selecione uma forma de Pagamento','pix', 'dinheiro', 'cartao'])
+    
+    const [selectedProduct, setSelectedProduct] = useState();
     const [eachCliente,setEachCliente] = useState("")
     const [modalVisible,setModalVisible]=useState(false)
     const [cliente,setCliente] = useState('')
@@ -23,21 +29,20 @@ export default function Abertas (props){
     const [nomeproduto,setNomeProduto]=useState("")
     const [quantidade,setQuantidade]=useState('')
     const [preco,setPreco] = useState("")
-    const [novoProduto,setNovoProduto] = useState("")
+
     const [qntdAntesDaMudanca, setQntdAntesDaMudanca]= useState('')
     const [idOndeMudou, setIdOndeMudou] = useState([])
     const [formaDePagamento,setFormaDePagamento] = useState('')
     const [color,setColor]= useState("#aaa")
     const [aplicarColor,setAplicarColor] = useState("#aaa")
     const [colorButtonTextInput, setColorButtonTextInput] = useState("#aaa")
-    //useEffect on getClientes()
-    // componentDidMount() {
-    //     this.getClientes()
-        
-    //     }
+
     useEffect(()=>{
             getClientes()
+            getAllProducts()
+
     },[props.refresh])
+
 
 const getClientes = ()=>{
         axios.get(`https://${ip}/todosClientesAbertos`, {
@@ -49,6 +54,20 @@ const getClientes = ()=>{
             })
     setEachCliente(obj)
 });
+}
+const getAllProducts = () =>{
+  const obj = []
+  obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
+  axios.get(`https://${ip}/allProducts`).then(async function (res) {
+    const arrAllProducts = res.data.nomeproduto
+    // await arrAllProducts.forEach((e,i,res)=>{
+    //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
+    // })
+    obj.push(arrAllProducts.map((r)=>{
+      return (<Picker.Item label={r} value={r}></Picker.Item>)
+    }))
+    }).catch(error => console.log(error));
+    return setAllProducts(obj)
 }
 
 const getComandaCliente =(cliente)=>{
@@ -182,14 +201,20 @@ const renderTotalRS = () =>{
   }
 }
 
-const addPeloTextInput = () =>{
-  // novoProduto, cliente q ta clicado e mandar um post 
-  console.log(cliente, novoProduto)
+const pickerAddButton = () =>{
+
+  if (!selectedProduct || selectedProduct === "0"){
+    setColorButtonTextInput('red')
+    setTimeout(()=>{
+      setColorButtonTextInput('#aaa')
+    },200)
+    return alert('escolha um produto')
+  }
   setColorButtonTextInput('green')
   
   axios.post(`https://${ip}/addToComanda`, {
     cliente: cliente,
-    nomeproduto:novoProduto,
+    nomeproduto:selectedProduct,
     quantidade:1
 })
 .then(function (response) {
@@ -200,12 +225,22 @@ const addPeloTextInput = () =>{
 });
 setTimeout(()=>{
   getComandaCliente(cliente)
-  setNovoProduto('')
+  setSelectedProduct('')
   setColorButtonTextInput('#aaa')
 },2000)
 
 }
 const pagarAConta = () =>{
+
+  if(formaDePagamento === 'Selecione uma forma de Pagamento'){
+    setColor("red")
+    alert('voce nao escolheu uma forma de pagamento')
+    setTimeout(()=>{
+
+      setColor("#aaa")
+    },200)
+    return
+  }
   
   if (formaDePagamento.length>2){
   console.log(cliente,' esta pagando um total de' , renderTotalRS(), ' reais com', formaDePagamento, 'dos pedidos com ids ', id )
@@ -285,33 +320,56 @@ const headerWidthSize = Dimensions.get('window').width*0.755
 
 
               {/* botao de adicionar */}
-              <View style={{flexDirection:'row', width:Dimensions.get('screen').width*0.75, textAlign: 'center', marginTop:8, marginBottom:10 }}>
-              {/* <TextInput onChangeText={setNovoProduto} placeholder='adicionar um produto' value={novoProduto} style={{backgroundColor:"#eee", width:"100%", paddingLeft:10}}></TextInput> */}
-                <TextInput 
+              <View style={{flexDirection:'row', width:Dimensions.get('window').width*0.75, textAlign: 'center', marginTop:8, marginBottom:10 }}>
+       
+              <Picker
+              mode={'dropdown'}
+              style={{width:Dimensions.get('window').width*0.7}}
+        selectedValue={selectedProduct}
+        onValueChange={(itemValue, itemIndex) =>
+          setSelectedProduct(itemValue)
+        }>
+          {allProducts}
+        
+      </Picker>
+                {/* <TextInput 
                 autoCapitalize={'none'} 
                 placeholder='adicione um produto' 
                 onChangeText={setNovoProduto} 
                 value={novoProduto} 
-                style={{backgroundColor:"#eee",alignContent:'center', width:Dimensions.get('screen').width*0.70, paddingLeft:10,height:30}} />
-              <TouchableOpacity style={{backgroundColor: colorButtonTextInput, height:30, width:Dimensions.get('screen').width*0.05, justifyContent:'center', alignItems:'center'}} onPress={addPeloTextInput}><Text>+</Text></TouchableOpacity>
+                style={{backgroundColor:"#eee",alignContent:'center', width:Dimensions.get('screen').width*0.70, paddingLeft:10,height:30}} /> */}
+              <TouchableOpacity style={{backgroundColor: colorButtonTextInput, height:30, width:Dimensions.get('window').width*0.05, justifyContent:'center', alignItems:'center'}} onPress={pickerAddButton}><Text>+</Text></TouchableOpacity>
               </View>
               {/* add aqui as coisas da conta que puxar do cliente */}
               
-              <View style={{flexDirection:'row', width:Dimensions.get('screen').width*0.75}}>
+              <View style={{flexDirection:'row', width:Dimensions.get('window').width*0.75}}>
 
-                <TextInput 
+              <Picker
+              mode={'dropdown'}
+              style={{width:Dimensions.get('window').width*0.64}}
+        selectedValue={formaDePagamento}
+        onValueChange={(itemValue, itemIndex) =>
+          setFormaDePagamento(itemValue)
+        }>
+          {allPagamentos.map((r)=>{
+            return(<Picker.Item label={r} value={r} />)
+            })}
+        
+      </Picker>
+                {/* <TextInput 
                   autoCapitalize={'none'} 
                   placeholder='adicione a forma de pagamento' 
                   onChangeText={setFormaDePagamento} 
                   value={formaDePagamento} 
                   style={{backgroundColor:"#eee", width:Dimensions.get('screen').width*0.5, paddingLeft:10,height:30}} />
+                */}
                 <TouchableOpacity 
                   style={{backgroundColor: color, height:30, width:Dimensions.get('window').width*0.22, justifyContent:'center', alignItems:'center', marginLeft:13}} 
                   onPress={pagarAConta}>
                   <Text style={styles.textStyle}>PAGAR</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> 
               </View>
-              <View style={{width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:20,flexDirection:'row', justifyContent:'space-around'}}>
+              <View style={{width:Dimensions.get('window').width*0.8, marginBottom:10, marginTop:20,flexDirection:'row', justifyContent:'space-around'}}>
               <TouchableOpacity
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => {
@@ -361,7 +419,7 @@ const headerWidthSize = Dimensions.get('window').width*0.755
     style={styles.flatListContainer}
     renderItem={renderItem}
     numColumns={numColumns}
-    extraData={[modalVisible, preco,nomeproduto,id,quantidade, novoProduto ]}
+    extraData={[modalVisible, preco,nomeproduto,id,quantidade, selectedProduct ]}
     />
  )   
 }
@@ -396,6 +454,7 @@ const styles = StyleSheet.create({
     },
     modalContainer:{
       height: Dimensions.get('window').height-300,
+      // width: Dimensions.get("window").width *0.8,
       backgroundColor: '#999',
   
     },
@@ -410,10 +469,10 @@ const styles = StyleSheet.create({
       
     },
     modalView: {
-      width:Dimensions.get('screen').width*0.8,
-      height:Dimensions.get('screen').height*0.78,
+      width:Dimensions.get('window').width*0.8,
+      height:Dimensions.get('window').height*0.78,
       margin: 20,
-      backgroundColor: "white",
+      backgroundColor: "#fff",
       borderRadius: 20,
       padding: 35,
       alignItems: "center",
