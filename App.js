@@ -3,14 +3,20 @@ import LoginScreen from './loginPage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import Configuracao from './Configuracao';
 import Abertas from './Abertas';
 import Fechadas from './Fechadas';
+import { Picker } from '@react-native-picker/picker';
 
-// const ip = '192.168.0.17:3001' // meu ip
-const ip = 'limitless-lowlands-68334.herokuapp.com' 
+import { UserContext } from "./UserContext";
+
+
+
+// const ip = '127.0.0.1:3001'
+const ip = '192.168.0.17:3001' // meu ip
+// const ip = 'limitless-lowlands-68334.herokuapp.com' 
 const DeviceWidth =  Dimensions.get('window').width
 const numColumns = 3
 
@@ -229,6 +235,28 @@ function TabAbertas ({navigation}) {
   const [refresh, setRefresh] = useState(false)
   const [color,setColor]= useState("#24a0ed")
 
+  const [allProducts, setAllProducts]=useState('')
+  const [selectedProduct, setSelectedProduct] = useState("")
+
+  useEffect(()=>{
+    getAllProducts()
+  },[])
+
+  const getAllProducts = () =>{
+    const obj = []
+    obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
+    axios.get(`http://${ip}/allProducts`).then(async function (res) {
+      const arrAllProducts = res.data.nomeproduto
+      // await arrAllProducts.forEach((e,i,res)=>{
+      //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
+      // })
+      obj.push(arrAllProducts.map((r)=>{
+        return (<Picker.Item label={r} value={r}></Picker.Item>)
+      }))
+      }).catch(error => console.log(error));
+      return setAllProducts(obj)
+  }
+
   
       useLayoutEffect(()=>{
         navigation.setOptions({
@@ -246,6 +274,9 @@ function TabAbertas ({navigation}) {
   
 
 const addClientePopUp = () =>{
+  // aqui add o fetch dos produtos pro picker ? ou no page load mesmo?
+
+
   setModalVisible(!modalVisible) 
   setColor("#24a0ed")
   // axios.get produtos e precos da lista de produtos e setar um estado
@@ -254,10 +285,10 @@ const addClientePopUp = () =>{
 const adicionarNovoCliente = () =>{
   setColor("green")
 
-    axios.post(`https://${ip}/addToComanda`, {
+    axios.post(`http://${ip}/addToComanda`, {
       cliente:novoCliente,
       quantidade:quantidade,
-      nomeproduto:produto,
+      nomeproduto:selectedProduct,
       token: token
   })
   .then(function (response) {
@@ -276,7 +307,7 @@ const adicionarNovoCliente = () =>{
   
 
 
-  console.log('info do que da sendo adicionado', novoCliente, quantidade, produto)
+  console.log('info do que da sendo adicionado', novoCliente, quantidade, selectedProduct)
   
   setTimeout(()=>{
     setRefresh(true)
@@ -409,13 +440,21 @@ const styles = StyleSheet.create({
         onChangeText={setNovoCliente}
         placeholder="Nome/Mesa do Cliente"
       />
-      {/* esse text input aqui tem que ser uma lista dos produtos q eu dei get quando cliquei o botao do modal,
-       mas por enquanto vai ser um input, e vai da merda no banco se não tiver esse produto lá */}
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         placeholder="Listinha de produtos"
         onChangeText={setProduto}
-      />
+      /> */}
+          <Picker
+              mode={'dropdown'}
+              style={{width:Dimensions.get('window').width*0.3  }}
+        selectedValue={selectedProduct}
+        onValueChange={(itemValue, itemIndex) =>
+          setSelectedProduct(itemValue)
+        }>
+          {allProducts}
+        
+      </Picker>
       <TextInput
         style={styles.input}
         placeholder="Qntd"
@@ -465,19 +504,26 @@ function Home() {
 }
 
 export default function App() {
+
+
+  const [token,setToken] = useState("")
+
   return (
      <NavigationContainer>
+
     {/* <Home></Home> */}
     
+      <UserContext.Provider value={{token,setToken}}>
        <Stack.Navigator>
          <Stack.Screen
            name="Login"
            component={LoginScreen}
            options={{ headerShown: false }}
-         />
+           />
          <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
        
          </Stack.Navigator>
+      </UserContext.Provider>
      </NavigationContainer>
   );
 }

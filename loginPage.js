@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
  StyleSheet,
  Text,
@@ -11,47 +11,32 @@ import {
  Keyboard,
 } from 'react-native';
 import axios from 'axios';
+import { UserContext } from './UserContext';
  
-//  const ip = '192.168.0.17:3001'
-const ip = "limitless-lowlands-68334.herokuapp.com" 
+
+
+ const ip = '192.168.0.17:3001'
+// const ip = "limitless-lowlands-68334.herokuapp.com" 
 export default function LoginScreen({navigation}) {
- 
+  
+  const {token,setToken} = useContext(UserContext)
 const [user,setUser] = useState("")
 const [password,setPassword] = useState("")
 
-let token = ""
+
  
 const loginButton = () =>{
    console.warn(user,password)
  
-/*
-const options = {
-    url: 'http://localhost/test.htm',
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
-    data: {
-      a: 10,
-      b: 20
-    }
-  };
-  axios(options)
-    .then(response => {
-      console.log(response.status);
-    });
-*/
-
-
 // as vezes o ip muda
-    axios.post(`https://${ip}/login`, {
+    axios.post(`http://${ip}/login`, {
         username:user,
         password:password
     })
     .then(function (response) {
+      console.log(response.data)
         if (response.data.auth){
-            token = response.data.token
+            setToken(response.data.token)
             navigation.navigate("Home")
             // redirect to main page / home page whatever
         }
@@ -62,8 +47,7 @@ const options = {
         // console.error(error);
   });
 }
- 
- 
+
  
    return (
    <TouchableWithoutFeedback 
@@ -114,6 +98,7 @@ const options = {
              <Text style={styles.registerText} >
                Criar Nova Conta
              </Text>
+             <Text>{token}</Text>
            </TouchableOpacity>
          </View>
        </View>
