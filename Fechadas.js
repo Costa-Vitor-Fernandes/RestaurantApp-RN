@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
  StyleSheet,
  Text,
@@ -8,7 +8,9 @@ import {
  TouchableOpacity,
  FlatList, Modal, Pressable, ScrollView
 } from 'react-native';
+
 import axios from 'axios';
+import { UserContext } from './UserContext';
 
 const numColumns = 3
 // const ip = '192.168.0.17:3001'
@@ -212,6 +214,7 @@ export default function Fechadas (props) {
     const [preco,setPreco] = useState("")
     const [formaDePagamento,setFormaDePagamento] = useState('')
 
+    const {token,setToken} = useContext(UserContext)
 
     //useEffect on getClientesFechados()
     // componentDidMount() {
@@ -240,7 +243,7 @@ const getComandaClienteFechado =(cliente)=>{
     axios.get(`http://${ip}/comandaFechadaCliente`, {
         params: {
         cliente: cliente,
-        // token: token,
+        token: token,
       },  
   
       headers: {
@@ -262,7 +265,7 @@ const getComandaClienteFechado =(cliente)=>{
   }
 const  popUpComanda = (cliente) =>{
     getComandaClienteFechado(cliente)
-    const token = '' 
+
     setModalVisible(!modalVisible)
       axios.get(`http://${ip}/comandaFechadaCliente`, {
         // body da req deve conter nome do cliente: nome e token: "TOKEN"

@@ -4,8 +4,8 @@ import { useState,useEffect,useContext } from 'react'
 import { BottomTabBar } from '@react-navigation/bottom-tabs'
 import { UserContext } from './UserContext';
 import axios from 'axios'
-const ip = '127.0.0.1:3001'
-// const ip ='192.168.0.17:3001'
+// const ip = '127.0.0.1:3001'
+const ip ='192.168.0.17:3001'
 // const ip = "limitless-lowlands-68334.herokuapp.com"
 const numColumns=3
 const headerWidthSize = Dimensions.get('window').width*0.755
@@ -118,10 +118,10 @@ setDeleteProdutotModal(del)
           </TouchableOpacity>
 
           {/* MODAL */}
-          {addProdutosModal? <AddProductModal state={addProdutosModal} setState={addProdutos} /> : null}
+          {addProdutosModal? <AddProductModal state={addProdutosModal} setState={addProdutos} token={token} /> : null}
           {alterPrecoModal? <AlterPrecoModal state={alterPrecoModal} setState={alterPreco} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} /> : null}
           {deleteProdutoModal? <DeleteModal state={deleteProdutoModal} setState={deleteProduto} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} token={token} /> : null}
-          {novoLoginModal? <NovoLoginModal state={novoLoginModal} setState={novoLogin} /> : null}
+          {novoLoginModal? <NovoLoginModal state={novoLoginModal} setState={novoLogin} token={token} /> : null}
           {todosPedidosModal? <TodosPedidosModal state={todosPedidosModal} setState={todosPedidosId} /> : null}
           {exportModal? <ExportModal state={exportModal} setState={exportFunc} /> : null}
           {/* EXPORT MODAL */}
@@ -176,7 +176,8 @@ function AddProductModal (props) {
       
       axios.post(`http://${ip}/addProduct`, {
         nomeproduto:novoProduto,
-        preco:preco
+        preco:preco,
+        token:props.token,
       }).then(function (response) {
         alert(`Produto ${novoProduto} foi adicionado com preco ${preco} `)
         setPreco("")
@@ -262,6 +263,7 @@ const fechar = () =>{
                   onChangeText={setPreco} 
                   value={preco} 
                   style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.23, paddingLeft:10,height:30}} />
+                  
         </View>
        
 
@@ -349,7 +351,8 @@ const apply = () =>{
 
   axios.post(`http://${ip}/editarPrecoProduto`,{
     nomeproduto:props.selectedProduct,
-    preco:preco
+    preco:preco,
+    token: props.token
 }).then(function (response) {
   console.log(response.data);
 })
@@ -547,6 +550,7 @@ return(<View></View>)
 }
 function NovoLoginModal (props) {
 
+  const [email,setEmail] = useState('')
   const [aplicarColor,setAplicarColor]=useState("#ddd")
   const [username, setUsername] =useState('')
   const [password, setPassword] = useState('')
@@ -590,6 +594,31 @@ function NovoLoginModal (props) {
     color:'#fff'
   }
 })
+const aplicarNovoLogin = () =>{
+  if(password === "" || passwordConfirm === "" || username === "" || password !== passwordConfirm){
+    return alert('preencha todos os campos correntamente')
+  }
+
+
+  if(password === passwordConfirm && password !== ""){
+    axios.post(`http://${ip}/create`,{
+      username:username,
+      password:password,
+      email:email,
+      token:props.token
+
+  }).then(function (response) {
+    console.log(response.data)
+    
+    // console.warn(response.data.token);
+  })
+  .catch(function (error) {
+    alert("Login inválido")
+    console.error(error);
+  });
+  
+}
+}
 const fechar = () =>{
 props.setState(!props.state)
 }
@@ -615,6 +644,11 @@ props.setState(!props.state)
                 onChangeText={setUsername} 
                 value={username} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10,}}/>
+      <TextInput autoCapitalize={'none'} 
+                placeholder='Email' 
+                onChangeText={setEmail} 
+                value={email} 
+                style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Senha' 
                 onChangeText={setPassword} 
@@ -638,7 +672,7 @@ props.setState(!props.state)
        </TouchableOpacity>
        <TouchableOpacity
          style={styles.aplicar}
-         onPress={fechar
+         onPress={aplicarNovoLogin
         }
         >
          <Text style={styles.textStyle}>Aplicar</Text>

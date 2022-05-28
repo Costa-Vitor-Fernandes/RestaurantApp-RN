@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import {
  StyleSheet,
  Text,
@@ -10,14 +10,17 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import axios from 'axios';
+import { UserContext } from './UserContext';
 
 const numColumns = 3;
-const token = ''
+
 // const ip = '127.0.0.1:3001'
 const ip = '192.168.0.17:3001'
 // const ip = 'limitless-lowlands-68334.herokuapp.com'
 
 export default function Abertas (props){
+
+    const {token,setToken} = useContext(UserContext)
 
     const [allProducts,setAllProducts] = useState('')
     const [allPagamentos, setAllPagamentos] = useState(['Selecione uma forma de Pagamento','pix', 'dinheiro', 'cartao'])
@@ -77,7 +80,7 @@ const getComandaCliente =(cliente)=>{
     axios.get(`http://${ip}/comandaCliente`, {
         params: {
         cliente: cliente,
-        // token: token,
+        token: token,
       },  
   
       headers: {
@@ -216,7 +219,8 @@ const pickerAddButton = () =>{
   axios.post(`http://${ip}/addToComanda`, {
     cliente: cliente,
     nomeproduto:selectedProduct,
-    quantidade:1
+    quantidade:1,
+    token: token
 })
 .then(function (response) {
     // console.warn(response.data);
@@ -251,7 +255,8 @@ const pagarAConta = () =>{
       axios.post(`http://${ip}/encerrarComanda`, {
         cliente:cliente,
         pagamento:formaDePagamento,
-        id:cadaid
+        id:cadaid,
+        token: token
       })
       .then(function (response) {
         // console.warn(response.data)

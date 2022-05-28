@@ -387,6 +387,7 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   button: {
+    height:45,
     borderRadius: 20,
     padding: 10,
     elevation: 2,
@@ -414,7 +415,10 @@ const styles = StyleSheet.create({
   adicionar:{
     backgroundColor: color,
     borderRadius:50,
-    height:30,
+    paddingHorizontal:10,
+    marginTop:10,
+    marginRight:10,
+    height:45,
     justifyContent:'center',
   }
 
@@ -462,23 +466,26 @@ const styles = StyleSheet.create({
         keyboardType="numeric"
         onChangeText={setQuantidade}
       />
+      <View style={{flexDirection: 'row', justifyContent:'center', alignItems:'flex-end' }}>
+
               <TouchableOpacity
                 style={styles.adicionar}
                 onPress={() => {
                   adicionarNovoCliente()}}
-              >
+                  >
                 <Text style={styles.textStyle}>adicionar</Text>
               </TouchableOpacity>
               
               
-              <Pressable
+              <TouchableOpacity
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => {
-                //  console.log('pressed')
-               setModalVisible(!modalVisible)}}
-              >
+                  //  console.log('pressed')
+                  setModalVisible(!modalVisible)}}
+                  >
                 <Text style={styles.textStyle}>voltar</Text>
-              </Pressable>
+              </TouchableOpacity>
+                </View>
             </View>
           </View>
       </Modal>
