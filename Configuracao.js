@@ -1,23 +1,29 @@
 import {Picker} from '@react-native-picker/picker';
 import {View, Text,Button, StyleSheet, TouchableOpacity, Dimensions,Modal,TextInput, ScrollView} from 'react-native'
-import { useState,useEffect } from 'react'
+import { useState,useEffect,useContext } from 'react'
 import { BottomTabBar } from '@react-navigation/bottom-tabs'
+import { UserContext } from './UserContext';
 import axios from 'axios'
-
-// const ip ='192.168.0.17:3001'
-const ip = "limitless-lowlands-68334.herokuapp.com"
+// const ip = '127.0.0.1:3001'
+const ip ='192.168.0.17:3001'
+// const ip = "limitless-lowlands-68334.herokuapp.com"
 const numColumns=3
 const headerWidthSize = Dimensions.get('window').width*0.755
 
 export default function Configuracao (){
 
-  const [selectedProduct, setSelectedProduct] = useState();
+  const {token,setToken} = useContext(UserContext)
+
+
   const [exportModal,setExportModal]= useState(false)
   const [addProdutosModal,setAddProdutosModal]= useState(false)
   const [alterPrecoModal, setAlterPrecoModal]= useState(false)
   const [deleteProdutoModal,setDeleteProdutotModal]= useState(false)
   const [novoLoginModal,setNovoLoginModal]= useState(false)
   const [todosPedidosModal,setTodosPedidosModal]= useState(false)
+
+  const [allProducts,setAllProducts] = useState('')
+  const [selectedProduct,setSelectedProduct] = useState('')
 
 
   const styles = StyleSheet.create({
@@ -36,34 +42,27 @@ export default function Configuracao (){
     },
     
   })
-//  async function ProductPicker () {
-  
 
-//   const obj = []
-//   await axios.get(`https://${ip}/allProducts`).then(async function (res) {
-//     const arrAllProducts = res.data.nomeproduto
-//     // await arrAllProducts.forEach((e,i,res)=>{
-//     //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
-//     // })
-//     obj.push(arrAllProducts.map((r)=>{
-//       return (<Picker.Item label={r} value={r}></Picker.Item>)
-//     }))
-//     }).catch(error => console.log(error));
+useEffect(()=>{
+  getAllProducts()
+},[])
 
-    
-//       return(
-//         <Picker
-//         selectedValue={selectedProduct}
-//         onValueChange={(itemValue, itemIndex) =>
-//           setSelectedProduct(itemValue)
-//         }>
-//         {obj}
-//       </Picker>
-//       )   
-    
 
-//     }
 
+const getAllProducts = () =>{
+  const obj = []
+  obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
+  axios.get(`http://${ip}/allProducts`).then(async function (res) {
+    const arrAllProducts = res.data.nomeproduto
+    // await arrAllProducts.forEach((e,i,res)=>{
+    //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
+    // })
+    obj.push(arrAllProducts.map((r)=>{
+      return (<Picker.Item label={r} value={r}></Picker.Item>)
+    }))
+    }).catch(error => console.log(error));
+    return setAllProducts(obj)
+}
 
   const exporter = (opt) =>{
     setExportModal(opt)
@@ -119,10 +118,10 @@ setDeleteProdutotModal(del)
           </TouchableOpacity>
 
           {/* MODAL */}
-          {addProdutosModal? <AddProductModal state={addProdutosModal} setState={addProdutos} /> : null}
-          {alterPrecoModal? <AlterPrecoModal state={alterPrecoModal} setState={alterPreco} /> : null}
-          {deleteProdutoModal? <DeleteModal state={deleteProdutoModal} setState={deleteProduto} /> : null}
-          {novoLoginModal? <NovoLoginModal state={novoLoginModal} setState={novoLogin} /> : null}
+          {addProdutosModal? <AddProductModal state={addProdutosModal} setState={addProdutos} token={token} /> : null}
+          {alterPrecoModal? <AlterPrecoModal state={alterPrecoModal} setState={alterPreco} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} /> : null}
+          {deleteProdutoModal? <DeleteModal state={deleteProdutoModal} setState={deleteProduto} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} token={token} /> : null}
+          {novoLoginModal? <NovoLoginModal state={novoLoginModal} setState={novoLogin} token={token} /> : null}
           {todosPedidosModal? <TodosPedidosModal state={todosPedidosModal} setState={todosPedidosId} /> : null}
           {exportModal? <ExportModal state={exportModal} setState={exportFunc} /> : null}
           {/* EXPORT MODAL */}
@@ -150,7 +149,7 @@ function AddProductModal (props) {
     },[])
 
     const getProdutos =() =>{
-      axios.get(`https://${ip}/allProducts`, {
+      axios.get(`http://${ip}/allProducts`, {
       }).then((res) => {
         const obj = []
           const arrAllProducts = res.data.nomeproduto
@@ -162,23 +161,30 @@ function AddProductModal (props) {
     }
 
     const aplicarAdicaoDeProd = () =>{
+      if(preco === "" || novoProduto === ""){
+        return alert("Preencha os campos antes de aplicar")
+      }
+
       if (!todosProdutos.includes(novoProduto)){
+        setAplicarColor("green")
         addNovoProdutoAoBanco()
-      }else alert('ERRO : talvez já exista')
+      }else alert('ERRO : talvez esse produto já exista')
     }
 
     const addNovoProdutoAoBanco =() =>{
-      console.log(novoProduto, preco, "novo Produto e preco")
-      axios.post(`https://${ip}/addProduct`, {
+
+      
+      axios.post(`http://${ip}/addProduct`, {
         nomeproduto:novoProduto,
-        preco:preco
+        preco:preco,
+        token:props.token,
       }).then(function (response) {
         alert(`Produto ${novoProduto} foi adicionado com preco ${preco} `)
         setPreco("")
         setNovoProduto("")
       })
       .catch(function (error) {
-      alert("Login inválido")
+      alert("Permissão inválida")
         // console.error(error);
   });
 
@@ -196,9 +202,9 @@ function AddProductModal (props) {
     },
     modalView: {
       alignSelf:'center',
-      width:Dimensions.get('screen').width*0.8,
-      height:Dimensions.get('screen').height*0.77,
-      marginTop:Dimensions.get('screen').height*0.05,
+      width:Dimensions.get('window').width*0.8,
+      height:Dimensions.get('window').height*0.32,
+      marginTop:Dimensions.get('window').height*0.15,
       backgroundColor: "#fff",
       borderRadius: 20,
       padding: 35,
@@ -213,7 +219,7 @@ function AddProductModal (props) {
       elevation: 5
     },
     aplicar:{
-      color:'#fff',
+      color:aplicarColor,
       elevation: 5,backgroundColor: aplicarColor, borderRadius:50, height:40, justifyContent:'center', padding:5
     },
     voltar:{
@@ -244,22 +250,24 @@ const fechar = () =>{
           
         }}>
      <View style={styles.modalView}>
-       <View style={{flexDirection:"row"}}>
+         <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>ADICIONAR PRODUTOS</Text>
+       <View style={{flexDirection:"row", paddingTop:10,}}>
 
        <TextInput  autoCapitalize={'none'} 
                   placeholder='adicione um produto' 
                   onChangeText={setNovoProduto} 
                   value={novoProduto} 
-                  style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginRight:10,}}/>
+                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.48, paddingLeft:10,height:30, marginRight:10,}}/>
        <TextInput autoCapitalize={'none'} 
                   placeholder='preco' 
                   onChangeText={setPreco} 
                   value={preco} 
-                  style={{backgroundColor:"#eee", width:"30%", paddingLeft:10,height:30}} />
+                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.23, paddingLeft:10,height:30}} />
+                  
         </View>
        
 
-         <View style={{ backgroundColor:'orange',width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
+         <View style={{width:Dimensions.get('window').width*0.8, marginTop:Dimensions.get('window').height*0.05,  flexDirection:'row', justifyContent:'space-around'}}>
            <TouchableOpacity
            style={styles.voltar}
            onPress={fechar
@@ -286,8 +294,9 @@ const fechar = () =>{
 }
 function AlterPrecoModal (props) {
 
+
   const [aplicarColor,setAplicarColor]=useState("#ddd")
-  const [produto, setProduto] =useState('')
+
   const [preco, setPreco] = useState('')
 
   const styles = StyleSheet.create({
@@ -301,9 +310,9 @@ function AlterPrecoModal (props) {
   },
   modalView: {
     alignSelf:'center',
-    width:Dimensions.get('screen').width*0.8,
-    height:Dimensions.get('screen').height*0.77,
-    marginTop:Dimensions.get('screen').height*0.05,
+    width:Dimensions.get('window').width*0.8,
+    height:Dimensions.get('window').height*0.3,
+    marginTop:Dimensions.get('window').height*0.25,
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 35,
@@ -328,8 +337,29 @@ function AlterPrecoModal (props) {
     color:'#fff'
   }
 })
+
+
 const fechar = () =>{
 props.setState(!props.state)
+}
+
+const apply = () =>{
+  if(props.selectedProduct === "0" || preco === ""){
+    return alert("Preencha os campos")
+  }
+  alert(`o produto ${props.selectedProduct} foi alterado tem como preço atual R$${preco}`)
+
+  axios.post(`http://${ip}/editarPrecoProduto`,{
+    nomeproduto:props.selectedProduct,
+    preco:preco,
+    token: props.token
+}).then(function (response) {
+  console.log(response.data);
+})
+.catch(function (error) {
+// alert("Login inválido")
+  // console.error(error);
+});
 }
   if(props.state){
     
@@ -347,22 +377,28 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
+     <Text>Alterar Preços</Text>
      <View style={{flexDirection:"row"}}>
+     <Picker
+              mode={'dropdown'}
+              style={{width:Dimensions.get('window').width*0.45,height: Dimensions.get('window').height*0.05}}
+        selectedValue={props.selectedProduct}
+        onValueChange={(itemValue, itemIndex) =>
+          props.setSelectedProduct(itemValue)
+        }>
+          {props.allProducts}
+        
+      </Picker>
 
-     <TextInput  autoCapitalize={'none'} 
-                placeholder='Adicione um produto existente' 
-                onChangeText={setProduto} 
-                value={produto} 
-                style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginRight:10,}}/>
      <TextInput autoCapitalize={'none'} 
                 placeholder='Novo preco' 
                 onChangeText={setPreco} 
                 value={preco} 
-                style={{backgroundColor:"#eee", width:"30%", paddingLeft:10,height:30}} />
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.25,height: Dimensions.get('window').height*0.05, paddingLeft:10,}} />
       </View>
      
 
-       <View style={{ backgroundColor:'orange',width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
+       <View style={{width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:Dimensions.get("window").height*0.05,flexDirection:'row', justifyContent:'space-around'}}>
          <TouchableOpacity
          style={styles.voltar}
          onPress={fechar
@@ -373,7 +409,7 @@ props.setState(!props.state)
        </TouchableOpacity>
        <TouchableOpacity
          style={styles.aplicar}
-         onPress={fechar
+         onPress={apply
         }
         >
          <Text style={styles.textStyle}>Aplicar</Text>
@@ -390,7 +426,7 @@ return(<View></View>)
 }
 function DeleteModal (props) {
 
-  const [aplicarColor,setAplicarColor]=useState("#ddd")
+  const [excluirColor,setExcluirColor]=useState("#ddd")
   const [produto, setProduto] =useState('')
 
   const styles = StyleSheet.create({
@@ -405,8 +441,8 @@ function DeleteModal (props) {
   modalView: {
     alignSelf:'center',
     width:Dimensions.get('screen').width*0.8,
-    height:Dimensions.get('screen').height*0.77,
-    marginTop:Dimensions.get('screen').height*0.05,
+    height:Dimensions.get('screen').height*0.3,
+    marginTop:Dimensions.get('screen').height*0.28,
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 35,
@@ -420,9 +456,9 @@ function DeleteModal (props) {
     shadowRadius: 2,
     elevation: 5
   },
-  aplicar:{
+  excluir:{
     color:'#fff',
-    elevation: 5,backgroundColor: aplicarColor, borderRadius:50, height:40, justifyContent:'center', padding:5
+    elevation: 5,backgroundColor: excluirColor, borderRadius:50, height:40, justifyContent:'center', padding:5
   },
   voltar:{
     elevation: 5,backgroundColor: '#009dff', borderRadius:50, height:40, justifyContent:'center', padding:5
@@ -431,6 +467,26 @@ function DeleteModal (props) {
     color:'#fff'
   }
 })
+
+const excluirProduto = ()=>{
+  setExcluirColor("green")
+  console.log(props.token, 'token')
+ 
+  
+  // this if is only preventing axios cuz its getting jwt security installed
+if(!produto ===""){
+
+  axios.delete(`http://${ip}/deleteProduct`, {data:{
+    nomeproduto:props.selectedProduct,
+    token: props.token
+  }}).then(function (response) {
+    console.warn(response.data);
+  }).catch(error => console.log(error));
+  
+}
+  setExcluirColor("#eee")
+}
+
 const fechar = () =>{
 props.setState(!props.state)
 }
@@ -450,17 +506,23 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
+     <Text style={{paddingBottom: Dimensions.get('window').height*0.04}}>CUIDADO AO EXCLUIR</Text>
      <View style={{flexDirection:"row"}}>
+     <Picker
+              mode={'dropdown'}
+              style={{width:Dimensions.get('window').width*0.7,height: Dimensions.get('window').height*0.05}}
+        selectedValue={props.selectedProduct}
+        onValueChange={(itemValue, itemIndex) =>
+          props.setSelectedProduct(itemValue)
+        }>
+          {props.allProducts}
+        
+      </Picker>
 
-     <TextInput  autoCapitalize={'none'} 
-                placeholder='Delete um produto existente' 
-                onChangeText={setProduto} 
-                value={produto} 
-                style={{backgroundColor:"#eee", width:"100%", paddingLeft:10,height:30, marginRight:10,}}/>
      </View>
      
 
-       <View style={{ backgroundColor:'orange',width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
+       <View style={{width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
          <TouchableOpacity
          style={styles.voltar}
          onPress={fechar
@@ -470,11 +532,11 @@ props.setState(!props.state)
          {/* add aqui opções de preparo pra exportar - ARQUIVAR */}
        </TouchableOpacity>
        <TouchableOpacity
-         style={styles.aplicar}
-         onPress={fechar
+         style={styles.excluir}
+         onPress={excluirProduto
         }
         >
-         <Text style={styles.textStyle}>Aplicar</Text>
+         <Text style={styles.textStyle}>EXCLUIR</Text>
          {/* add aqui opções de preparo pra exportar - ARQUIVAR */}
        </TouchableOpacity>
 
@@ -488,6 +550,7 @@ return(<View></View>)
 }
 function NovoLoginModal (props) {
 
+  const [email,setEmail] = useState('')
   const [aplicarColor,setAplicarColor]=useState("#ddd")
   const [username, setUsername] =useState('')
   const [password, setPassword] = useState('')
@@ -531,6 +594,31 @@ function NovoLoginModal (props) {
     color:'#fff'
   }
 })
+const aplicarNovoLogin = () =>{
+  if(password === "" || passwordConfirm === "" || username === "" || password !== passwordConfirm){
+    return alert('preencha todos os campos correntamente')
+  }
+
+
+  if(password === passwordConfirm && password !== ""){
+    axios.post(`http://${ip}/create`,{
+      username:username,
+      password:password,
+      email:email,
+      token:props.token
+
+  }).then(function (response) {
+    console.log(response.data)
+    
+    // console.warn(response.data.token);
+  })
+  .catch(function (error) {
+    alert("Login inválido")
+    console.error(error);
+  });
+  
+}
+}
 const fechar = () =>{
 props.setState(!props.state)
 }
@@ -556,6 +644,11 @@ props.setState(!props.state)
                 onChangeText={setUsername} 
                 value={username} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10,}}/>
+      <TextInput autoCapitalize={'none'} 
+                placeholder='Email' 
+                onChangeText={setEmail} 
+                value={email} 
+                style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Senha' 
                 onChangeText={setPassword} 
@@ -579,7 +672,7 @@ props.setState(!props.state)
        </TouchableOpacity>
        <TouchableOpacity
          style={styles.aplicar}
-         onPress={fechar
+         onPress={aplicarNovoLogin
         }
         >
          <Text style={styles.textStyle}>Aplicar</Text>
@@ -610,7 +703,7 @@ function TodosPedidosModal (props) {
 
 
   const getTodosPedidosPorId =() =>{
-    axios.get(`https://${ip}/todosPedidosPorId`, {
+    axios.get(`http://${ip}/todosPedidosPorId`, {
     }).then((res) => {
       const obj = []
       res.data.id.forEach((e,i, res)=>{

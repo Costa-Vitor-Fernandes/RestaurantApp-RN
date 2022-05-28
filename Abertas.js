@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import {
  StyleSheet,
  Text,
@@ -10,13 +10,17 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import axios from 'axios';
+import { UserContext } from './UserContext';
 
 const numColumns = 3;
-const token = ''
-// const ip = '192.168.0.17:3001'
-const ip = 'limitless-lowlands-68334.herokuapp.com'
+
+// const ip = '127.0.0.1:3001'
+const ip = '192.168.0.17:3001'
+// const ip = 'limitless-lowlands-68334.herokuapp.com'
 
 export default function Abertas (props){
+
+    const {token,setToken} = useContext(UserContext)
 
     const [allProducts,setAllProducts] = useState('')
     const [allPagamentos, setAllPagamentos] = useState(['Selecione uma forma de Pagamento','pix', 'dinheiro', 'cartao'])
@@ -45,7 +49,7 @@ export default function Abertas (props){
 
 
 const getClientes = ()=>{
-        axios.get(`https://${ip}/todosClientesAbertos`, {
+        axios.get(`http://${ip}/todosClientesAbertos`, {
         }).then((res) => {
           const obj = []
             const arrClientes = res.data
@@ -58,7 +62,7 @@ const getClientes = ()=>{
 const getAllProducts = () =>{
   const obj = []
   obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
-  axios.get(`https://${ip}/allProducts`).then(async function (res) {
+  axios.get(`http://${ip}/allProducts`).then(async function (res) {
     const arrAllProducts = res.data.nomeproduto
     // await arrAllProducts.forEach((e,i,res)=>{
     //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
@@ -73,10 +77,10 @@ const getAllProducts = () =>{
 const getComandaCliente =(cliente)=>{
     console.log('getComandacliente')
   
-    axios.get(`https://${ip}/comandaCliente`, {
+    axios.get(`http://${ip}/comandaCliente`, {
         params: {
         cliente: cliente,
-        // token: token,
+        token: token,
       },  
   
       headers: {
@@ -99,7 +103,7 @@ const  popUpComanda = (cliente) =>{
     getComandaCliente(cliente)
     const token = '' 
     setModalVisible(!modalVisible)
-      axios.get(`https://${ip}/comandaCliente`, {
+      axios.get(`http://${ip}/comandaCliente`, {
         // body da req deve conter nome do cliente: nome e token: "TOKEN"
         params: {
           cliente: cliente,
@@ -140,7 +144,7 @@ const formatData = (data, numColumns) => {
 
   const updateQuantidade = (id, quantidade) =>{
     
-    axios.post(`https://${ip}/updateQuantidade`, {
+    axios.post(`http://${ip}/updateQuantidade`, {
       quantidade:quantidade,
       id:id,
       token: token
@@ -212,10 +216,11 @@ const pickerAddButton = () =>{
   }
   setColorButtonTextInput('green')
   
-  axios.post(`https://${ip}/addToComanda`, {
+  axios.post(`http://${ip}/addToComanda`, {
     cliente: cliente,
     nomeproduto:selectedProduct,
-    quantidade:1
+    quantidade:1,
+    token: token
 })
 .then(function (response) {
     // console.warn(response.data);
@@ -232,7 +237,7 @@ setTimeout(()=>{
 }
 const pagarAConta = () =>{
 
-  if(formaDePagamento === 'Selecione uma forma de Pagamento'){
+  if(formaDePagamento === 'Selecione uma forma de Pagamento' || formaDePagamento === ""){
     setColor("red")
     alert('voce nao escolheu uma forma de pagamento')
     setTimeout(()=>{
@@ -247,10 +252,11 @@ const pagarAConta = () =>{
   setColor('green')
   function encerraComanda (cadaid) {
 
-      axios.post(`https://${ip}/encerrarComanda`, {
+      axios.post(`http://${ip}/encerrarComanda`, {
         cliente:cliente,
         pagamento:formaDePagamento,
-        id:cadaid
+        id:cadaid,
+        token: token
       })
       .then(function (response) {
         // console.warn(response.data)
@@ -378,7 +384,9 @@ const headerWidthSize = Dimensions.get('window').width*0.755
                 setIdOndeMudou([])
                 setQuantidade("")
                 setPreco('')
-                setModalVisible(!modalVisible)  
+                setModalVisible(!modalVisible)
+                setFormaDePagamento('')
+                setSelectedProduct("")
                 }}
               >
                 <Text style={styles.textStyle}>Voltar</Text>
