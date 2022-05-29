@@ -3,6 +3,7 @@ import {View, Text,Button, StyleSheet, TouchableOpacity, Dimensions,Modal,TextIn
 import { useState,useEffect,useContext } from 'react'
 import { BottomTabBar } from '@react-navigation/bottom-tabs'
 import { UserContext } from './UserContext';
+import * as FileSystem from 'expo-file-system';
 import axios from 'axios'
 // const ip = '127.0.0.1:3001'
 const ip ='192.168.0.17:3001'
@@ -21,6 +22,7 @@ export default function Configuracao (){
   const [deleteProdutoModal,setDeleteProdutotModal]= useState(false)
   const [novoLoginModal,setNovoLoginModal]= useState(false)
   const [todosPedidosModal,setTodosPedidosModal]= useState(false)
+  const [deleteOrderIdModal, setDeleteOrderIdModal]= useState(false)
 
   const [allProducts,setAllProducts] = useState('')
   const [selectedProduct,setSelectedProduct] = useState('')
@@ -63,6 +65,9 @@ const getAllProducts = () =>{
     }).catch(error => console.log(error));
     return setAllProducts(obj)
 }
+const deleteOrderId =(produto) =>{
+  setDeleteOrderIdModal(produto)
+}
 
   const exporter = (opt) =>{
     setExportModal(opt)
@@ -102,6 +107,10 @@ setDeleteProdutotModal(del)
           <Text style={styles.textButton}>Excluir Produtos</Text>
           </TouchableOpacity>
 
+          <TouchableOpacity style={styles.basicButton} onPress={()=>setDeleteOrderIdModal(true)} >
+          <Text style={styles.textButton}>Excluir Pedido Por id</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.basicButton} onPress={()=>setNovoLoginModal(true)}>
           <Text style={styles.textButton}>Cadastrar novo Login</Text>
           </TouchableOpacity>
@@ -113,9 +122,7 @@ setDeleteProdutotModal(del)
           <TouchableOpacity style={styles.basicButton} onPress={()=>setExportModal(true)}>
           <Text style={styles.textButton}>Encerrar Aba Fechadas(Exportar p/ Excel)"</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.basicButton} >
-          <Text style={styles.textButton}>Lista Todos os Produtos</Text>
-          </TouchableOpacity>
+
 
           {/* MODAL */}
           {addProdutosModal? <AddProductModal state={addProdutosModal} setState={addProdutos} token={token} /> : null}
@@ -123,7 +130,9 @@ setDeleteProdutotModal(del)
           {deleteProdutoModal? <DeleteModal state={deleteProdutoModal} setState={deleteProduto} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} token={token} /> : null}
           {novoLoginModal? <NovoLoginModal state={novoLoginModal} setState={novoLogin} token={token} /> : null}
           {todosPedidosModal? <TodosPedidosModal state={todosPedidosModal} setState={todosPedidosId} /> : null}
-          {exportModal? <ExportModal state={exportModal} setState={exportFunc} /> : null}
+          {exportModal? <ExportModal state={exportModal} setState={exportFunc} token={token} /> : null}
+          {deleteOrderIdModal? <DeleteOrderIdModal state={deleteOrderIdModal} setState={deleteOrderId} token={token}/> : null}
+         
           {/* EXPORT MODAL */}
       </View>
     )
@@ -311,7 +320,7 @@ function AlterPrecoModal (props) {
   modalView: {
     alignSelf:'center',
     width:Dimensions.get('window').width*0.8,
-    height:Dimensions.get('window').height*0.3,
+    height:Dimensions.get('window').height*0.35,
     marginTop:Dimensions.get('window').height*0.25,
     backgroundColor: "#fff",
     borderRadius: 20,
@@ -377,7 +386,7 @@ const apply = () =>{
         
       }}>
    <View style={styles.modalView}>
-     <Text>Alterar Preços</Text>
+     <Text style={{marginBottom:30}}>Alterar Preços</Text>
      <View style={{flexDirection:"row"}}>
      <Picker
               mode={'dropdown'}
@@ -568,8 +577,8 @@ function NovoLoginModal (props) {
   modalView: {
     alignSelf:'center',
     width:Dimensions.get('screen').width*0.8,
-    height:Dimensions.get('screen').height*0.77,
-    marginTop:Dimensions.get('screen').height*0.05,
+    height:Dimensions.get('screen').height*0.43,
+    marginTop:Dimensions.get('screen').height*0.30  ,
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 35,
@@ -596,11 +605,14 @@ function NovoLoginModal (props) {
 })
 const aplicarNovoLogin = () =>{
   if(password === "" || passwordConfirm === "" || username === "" || password !== passwordConfirm){
+    setAplicarColor("red")
+    setTimeout(()=>{setAplicarColor('#ddd')},200)
     return alert('preencha todos os campos correntamente')
   }
 
 
   if(password === passwordConfirm && password !== ""){
+    setAplicarColor('green')
     axios.post(`http://${ip}/create`,{
       username:username,
       password:password,
@@ -616,7 +628,9 @@ const aplicarNovoLogin = () =>{
     alert("Login inválido")
     console.error(error);
   });
-  
+
+  alert(`usuario ${username} foi criado`)
+  setTimeout(()=>{setAplicarColor('#ddd')},100)
 }
 }
 const fechar = () =>{
@@ -638,7 +652,7 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
-
+<Text style={{marginBottom:Dimensions.get('window').height*0.04}}>ADICIONAR NOVO LOGIN</Text>
      <TextInput  autoCapitalize={'none'} 
                 placeholder='Adicione um nome de usuário/email' 
                 onChangeText={setUsername} 
@@ -661,7 +675,7 @@ props.setState(!props.state)
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30}} />
      
 
-       <View style={{ backgroundColor:'orange',width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
+       <View style={{width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
          <TouchableOpacity
          style={styles.voltar}
          onPress={fechar
@@ -1014,9 +1028,9 @@ precoPreto:{
    </Modal>)
 }
 function ExportModal (props) {
+  const [selectedAction, setSelectedAction] = useState('')
   const [aplicarColor,setAplicarColor]=useState("#ddd")
-  const [produto, setProduto] =useState('')
-  const [preco, setPreco] = useState('')
+
 
   const styles = StyleSheet.create({
   centeredView: {
@@ -1030,8 +1044,8 @@ function ExportModal (props) {
   modalView: {
     alignSelf:'center',
     width:Dimensions.get('screen').width*0.8,
-    height:Dimensions.get('screen').height*0.77,
-    marginTop:Dimensions.get('screen').height*0.05,
+    height:Dimensions.get('screen').height*0.37,
+    marginTop:Dimensions.get('screen').height*0.17,
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 35,
@@ -1056,6 +1070,97 @@ function ExportModal (props) {
     color:'#fff'
   }
 })
+
+const excelAplicar = ()=>{
+  console.log('aplicar export modal', selectedAction)
+  if(selectedAction === "0" || selectedAction === ""){
+    setAplicarColor('red')
+    alert('selecione uma ação')
+    setTimeout(()=>{
+setAplicarColor('#ddd')
+    },200)
+  }
+  if(selectedAction === "1"){
+  setAplicarColor('green')
+
+  axios({
+    url: `http://${ip}/excelComandasFechadas`, //your url
+    method: 'GET',
+    responseType: 'blob', // important
+}).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+     // passar data aqui no nome
+    link.setAttribute('download', 'Fechadas.xlsx'); //or any other extension
+    document.body.appendChild(link);
+    link.click();
+});
+setTimeout(()=>{
+  setAplicarColor('#ddd')
+      },200)
+}
+  if(selectedAction ==="2"){
+    setAplicarColor('green')
+    axios({
+      url: `http://${ip}/excelTodasComandas`, //your url
+      method: 'GET',
+      responseType: 'blob', // important
+  }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      // passar data aqui no nome
+      link.setAttribute('download', 'Abertas-Fechadas.xlsx'); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+  });
+  setTimeout(()=>{
+    setAplicarColor('#ddd')
+        },200)
+  }
+  if(selectedAction === "3"){
+    setAplicarColor('green')
+    
+    axios({
+      url: `http://${ip}/excelComandasFechadas`, //your url
+      method: 'GET',
+      responseType: 'blob', // important
+  }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+       // passar data aqui no nome
+      link.setAttribute('download', 'Fechadas.xlsx'); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+  });
+
+  alert('deletando todas comandas fechadas')
+  setTimeout(()=>{
+
+    axios.delete(`http://${ip}/DeleteTodasComandasFechadas`,{
+      token:props.token
+    })
+  },2000)
+  setTimeout(()=>{
+    setAplicarColor('#ddd')
+        },200)
+}
+if(selectedAction===4){
+  setAplicarColor('green')
+  alert('deletando todas comandas fechadas')
+  setTimeout(()=>{
+    axios.delete(`http://${ip}/DeleteTodasComandasFechadas`, {
+      token:props.token
+    })
+  },2000)
+  setTimeout(()=>{
+    setAplicarColor('#ddd')
+        },200)
+}
+}
+
 const fechar = () =>{
 
 props.setState(!props.state)
@@ -1074,12 +1179,25 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
+     <Text style={{marginBottom:Dimensions.get('window').height*0.05}}>EXPORTAR DADOS PARA PLANILHA</Text>
      <View style={{flexDirection:"row"}}>
-
+<Picker
+mode={'dropdown'}
+style={{width:Dimensions.get('window').width*0.70,height: Dimensions.get('window').height*0.05}}
+selectedValue={selectedAction}
+onValueChange={(itemValue, itemIndex) =>
+setSelectedAction(itemValue)
+}>
+  <Picker.Item label="Selecione uma ação" value="0"/>
+  <Picker.Item label="Exportar Aba Fechadas" value="1"/>
+  <Picker.Item label="Exportar Aba Fechadas e Abertas" value="2"/>
+  <Picker.Item label="Exportar Aba Fechadas e excluir Fechadas" value="3"/>
+  <Picker.Item label="Excluir Fechadas" value="4"/>
+</Picker>
       </View>
      
 
-       <View style={{ backgroundColor:'orange',width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
+       <View style={{ width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:50,flexDirection:'row', justifyContent:'space-around'}}>
          <TouchableOpacity
          style={styles.voltar}
          onPress={fechar
@@ -1090,7 +1208,7 @@ props.setState(!props.state)
        </TouchableOpacity>
        <TouchableOpacity
          style={styles.aplicar}
-         onPress={fechar
+         onPress={excelAplicar
         }
         >
          <Text style={styles.textStyle}>Aplicar</Text>
@@ -1102,4 +1220,151 @@ props.setState(!props.state)
    
 </Modal>
 </View>)
+}
+
+function DeleteOrderIdModal (props){
+
+  const [id,setId] = useState([])
+  const [idPedido,setIdPedido] =  useState("")
+  const [nomeCliente,setNomeCliente] = useState("")
+  const [aplicarColor, setAplicarColor] =  useState("#ddd")
+
+
+
+
+
+  const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    backgroundColor:'#fff',
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: Dimensions.get('window').height*0.5,
+    
+  },
+  modalView: {
+    alignSelf:'center',
+    width:Dimensions.get('window').width*0.8,
+    height:Dimensions.get('window').height*0.32,
+    marginTop:Dimensions.get('window').height*0.15,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#555",
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowOpacity: 0.45,
+    shadowRadius: 2,
+    elevation: 5
+  },
+  aplicar:{
+    color:aplicarColor,
+    elevation: 5,backgroundColor: aplicarColor, borderRadius:50, height:40, justifyContent:'center', padding:5
+  },
+  voltar:{
+    elevation: 5,backgroundColor: '#009dff', borderRadius:50, height:40, justifyContent:'center', padding:5
+  },
+  textWhite:{
+    color:'#fff'
+  }
+})
+
+const removerPorId = () =>{
+  
+  setAplicarColor("green")
+  
+    axios.get(`http://${ip}/comandaCliente`, {
+        params: {
+        cliente: nomeCliente,
+        token: props.token,
+      },  
+  
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+    }).then((res) => {
+      const obj = []
+      res.data.id.forEach((e,i, res)=>{
+        obj.push(res[i])
+      })
+      console.log(obj)
+      console.log(obj.includes(+idPedido), 'includes127')
+      setId(obj)
+      if(obj.includes(+idPedido)){
+        console.log('axios delete')
+        axios.delete(`http://${ip}/deletePedido`,{data:{token:props.token, idpedido:idPedido}})
+        alert(`pedido de id${idPedido} foi deletado`)
+        setAplicarColor('#ddd')
+        setIdPedido("")
+        setNomeCliente("")
+      }else
+      alert('Preencha corretamente os campos')
+  })
+
+
+}
+
+
+const fechar = () =>{
+props.setState(!props.state)
+}
+  
+    return (
+    <View style={styles.centeredView}>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={props.state}
+      onRequestClose={() => {
+        //  Alert.alert("Modal has been closed."); 
+        
+        props.setState(!props.state)
+        
+      }}>
+   <View style={styles.modalView}>
+       <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>REMOVER PEDIDO POR ID</Text>
+     <View style={{flexDirection:"row", paddingTop:10,}}>
+
+     <TextInput  autoCapitalize={'none'} 
+                placeholder='Nome do Cliente' 
+                onChangeText={setNomeCliente} 
+                value={nomeCliente} 
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.48, paddingLeft:10,height:30, marginRight:10,}}/>
+     <TextInput autoCapitalize={'none'} 
+                placeholder='id' 
+                onChangeText={setIdPedido} 
+                value={idPedido} 
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.23, paddingLeft:10,height:30}} />
+                
+      </View>
+     
+
+       <View style={{width:Dimensions.get('window').width*0.8, marginTop:Dimensions.get('window').height*0.05,  flexDirection:'row', justifyContent:'space-around'}}>
+         <TouchableOpacity
+         style={styles.voltar}
+         onPress={fechar
+        }
+        >
+         <Text style={styles.textWhite}>Voltar</Text>
+         {/* add aqui opções de preparo pra exportar - ARQUIVAR */}
+       </TouchableOpacity>
+       <TouchableOpacity
+         style={styles.aplicar}
+         onPress={removerPorId
+        }
+        >
+         <Text style={styles.textStyle}>Aplicar</Text>
+         {/* add aqui opções de preparo pra exportar - ARQUIVAR */}
+       </TouchableOpacity>
+
+       </View> 
+   </View>
+   
+</Modal>
+</View>)
+
 }
