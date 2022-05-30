@@ -15,8 +15,8 @@ import { UserContext } from './UserContext';
 const numColumns = 3;
 
 // const ip = '127.0.0.1:3001'
-const ip = '192.168.0.17:3001'
-// const ip = 'limitless-lowlands-68334.herokuapp.com'
+// const ip = '192.168.0.17:3001'
+const ip = 'limitless-lowlands-68334.herokuapp.com'
 
 export default function Abertas (props){
 
@@ -49,7 +49,7 @@ export default function Abertas (props){
 
 
 const getClientes = ()=>{
-        axios.get(`http://${ip}/todosClientesAbertos`, {
+        axios.get(`https://${ip}/todosClientesAbertos`, {
         }).then((res) => {
           const obj = []
             const arrClientes = res.data
@@ -62,7 +62,7 @@ const getClientes = ()=>{
 const getAllProducts = () =>{
   const obj = []
   obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
-  axios.get(`http://${ip}/allProducts`).then(async function (res) {
+  axios.get(`https://${ip}/allProducts`).then(async function (res) {
     const arrAllProducts = res.data.nomeproduto
     // await arrAllProducts.forEach((e,i,res)=>{
     //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
@@ -77,7 +77,7 @@ const getAllProducts = () =>{
 const getComandaCliente =(cliente)=>{
     console.log('getComandacliente')
   
-    axios.get(`http://${ip}/comandaCliente`, {
+    axios.get(`https://${ip}/comandaCliente`, {
         params: {
         cliente: cliente,
         token: token,
@@ -103,7 +103,7 @@ const  popUpComanda = (cliente) =>{
     getComandaCliente(cliente)
     const token = '' 
     setModalVisible(!modalVisible)
-      axios.get(`http://${ip}/comandaCliente`, {
+      axios.get(`https://${ip}/comandaCliente`, {
         // body da req deve conter nome do cliente: nome e token: "TOKEN"
         params: {
           cliente: cliente,
@@ -144,7 +144,7 @@ const formatData = (data, numColumns) => {
 
   const updateQuantidade = (id, quantidade) =>{
     
-    axios.post(`http://${ip}/updateQuantidade`, {
+    axios.post(`https://${ip}/updateQuantidade`, {
       quantidade:quantidade,
       id:id,
       token: token
@@ -216,7 +216,7 @@ const pickerAddButton = () =>{
   }
   setColorButtonTextInput('green')
   
-  axios.post(`http://${ip}/addToComanda`, {
+  axios.post(`https://${ip}/addToComanda`, {
     cliente: cliente,
     nomeproduto:selectedProduct,
     quantidade:1,
@@ -252,7 +252,7 @@ const pagarAConta = () =>{
   setColor('green')
   function encerraComanda (cadaid) {
 
-      axios.post(`http://${ip}/encerrarComanda`, {
+      axios.post(`https://${ip}/encerrarComanda`, {
         cliente:cliente,
         pagamento:formaDePagamento,
         id:cadaid,

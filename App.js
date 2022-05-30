@@ -15,8 +15,8 @@ import { UserContext } from "./UserContext";
 
 
 // const ip = '127.0.0.1:3001'
-const ip = '192.168.0.17:3001' // meu ip
-// const ip = 'limitless-lowlands-68334.herokuapp.com' 
+// const ip = '192.168.0.17:3001' // meu ip
+const ip = 'limitless-lowlands-68334.herokuapp.com' 
 const DeviceWidth =  Dimensions.get('window').width
 const numColumns = 3
 
@@ -228,6 +228,8 @@ function TabFechadas({navigation}){
 
 
 function TabAbertas ({navigation}) {
+
+
   const [novoCliente, setNovoCliente] = useState("")
   const [produto,setProduto] = useState("")
   const [quantidade,setQuantidade]= useState("")
@@ -238,6 +240,8 @@ function TabAbertas ({navigation}) {
   const [allProducts, setAllProducts]=useState('')
   const [selectedProduct, setSelectedProduct] = useState("")
 
+  const {token,setToken} = useContext(UserContext)
+  
   useEffect(()=>{
     getAllProducts()
   },[])
@@ -245,7 +249,7 @@ function TabAbertas ({navigation}) {
   const getAllProducts = () =>{
     const obj = []
     obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
-    axios.get(`http://${ip}/allProducts`).then(async function (res) {
+    axios.get(`https://${ip}/allProducts`).then(async function (res) {
       const arrAllProducts = res.data.nomeproduto
       // await arrAllProducts.forEach((e,i,res)=>{
       //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
@@ -285,7 +289,7 @@ const addClientePopUp = () =>{
 const adicionarNovoCliente = () =>{
   setColor("green")
 
-    axios.post(`http://${ip}/addToComanda`, {
+    axios.post(`https://${ip}/addToComanda`, {
       cliente:novoCliente,
       quantidade:quantidade,
       nomeproduto:selectedProduct,
@@ -293,7 +297,7 @@ const adicionarNovoCliente = () =>{
   })
   .then(function (response) {
       if (response.data.auth){
-          token = response.data.token
+          setToken(response.data.token)
           navigation.navigate("Home")
           // redirect to main page / home page whatever
       }
@@ -420,6 +424,13 @@ const styles = StyleSheet.create({
     marginRight:10,
     height:45,
     justifyContent:'center',
+  },
+  textinput:{
+    padding:10,
+    backgroundColor:"#eee",
+    height:Dimensions.get('window').height*0.04,
+    marginVertical:Dimensions.get('window').height*0.02,
+    width:Dimensions.get("window").height*0.7
   }
 
 });
@@ -440,15 +451,10 @@ const styles = StyleSheet.create({
               <Text style={styles.modalText}>Adicionar</Text>
               {/* add aqui as coisas pra adicionar o cliente // style**** */}
               <TextInput
-        style={styles.input}
+        style={styles.textinput}
         onChangeText={setNovoCliente}
         placeholder="Nome/Mesa do Cliente"
       />
-      {/* <TextInput
-        style={styles.input}
-        placeholder="Listinha de produtos"
-        onChangeText={setProduto}
-      /> */}
           <Picker
               mode={'dropdown'}
               style={{width:Dimensions.get('window').width*0.3  }}
@@ -460,8 +466,8 @@ const styles = StyleSheet.create({
         
       </Picker>
       <TextInput
-        style={styles.input}
-        placeholder="Qntd"
+        style={styles.textinput}
+        placeholder="Qntd #"
         type='numeric'
         keyboardType="numeric"
         onChangeText={setQuantidade}
@@ -471,20 +477,20 @@ const styles = StyleSheet.create({
               <TouchableOpacity
                 style={styles.adicionar}
                 onPress={() => {
+                  //  console.log('pressed')
+                  setModalVisible(!modalVisible)}}
+                  >
+                <Text style={styles.textStyle}>voltar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.adicionar}
+                onPress={() => {
                   adicionarNovoCliente()}}
                   >
                 <Text style={styles.textStyle}>adicionar</Text>
               </TouchableOpacity>
               
               
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => {
-                  //  console.log('pressed')
-                  setModalVisible(!modalVisible)}}
-                  >
-                <Text style={styles.textStyle}>voltar</Text>
-              </TouchableOpacity>
                 </View>
             </View>
           </View>
