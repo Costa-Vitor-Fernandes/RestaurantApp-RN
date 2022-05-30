@@ -11,6 +11,9 @@ import {
  Keyboard,
 } from 'react-native';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const myIcon = <Icon name="cog" size={30} color="#999" />;
 import { UserContext } from './UserContext';
  
 
@@ -66,8 +69,23 @@ const loginButton = () =>{
            <Text style={styles.loginTitleText}>Login</Text>
            <View style={styles.hr}></View>
            <View style={styles.inputBox}>
-             <Text style={styles.inputLabel}>Usuário</Text>
- 
+            {/* {myIcon}
+            <Icon name="unlock" size={30} color="#999" />
+
+            <Icon name="trash" size={30} color="#999" />
+            <Icon name="server" size={30} color="#999" />
+            <Icon name="refresh" size={30} color="#999" />
+            <Icon name="save" size={30} color="#999" />
+            <Icon name="qrcode" size={30} color="#999" />
+            <Icon name="print" size={30} color="#999" />
+            <Icon name="plus" size={30} color="#999" />
+            <Icon name="pencil" size={30} color="#999" />
+            <Icon name="lock" size={30} color="#999" />
+            <Icon name="money" size={30} color="#999" /> */}
+            <View style={{flexDirection:'row'}}>
+            <Icon name="user" size={20} color="#999" />
+             <Text style={styles.inputLabel}> Usuário</Text>
+            </View>
              
 
 
@@ -81,7 +99,10 @@ const loginButton = () =>{
             
            </View>
            <View style={styles.inputBox}>
-             <Text style={styles.inputLabel}>Senha</Text>
+           <View style={{flexDirection:'row'}}>
+             <Icon name="lock" size={20} color="#999" />
+             <Text style={styles.inputLabel}> Senha</Text>
+             </View>
              <TextInput
                style={styles.input}
                autoCapitalize={'none'}

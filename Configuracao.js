@@ -5,6 +5,8 @@ import { BottomTabBar } from '@react-navigation/bottom-tabs'
 import { UserContext } from './UserContext';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios'
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 // const ip = '127.0.0.1:3001'
 // const ip ='192.168.0.17:3001'
 const ip = "limitless-lowlands-68334.herokuapp.com"
@@ -12,6 +14,8 @@ const numColumns=3
 const headerWidthSize = Dimensions.get('window').width*0.755
 
 export default function Configuracao (){
+
+
 
   const {token,setToken} = useContext(UserContext)
 
@@ -92,35 +96,33 @@ setDeleteProdutotModal(del)
   }
     return(
       <View style={styles.mainContainer}>
-        <Text>
-          Configurações Configurações Configurações 
-        </Text>         
+   
           <TouchableOpacity style={styles.basicButton} onPress={()=>setAddProdutosModal(true)}>
-          <Text style={styles.textButton}>Adicionar Produtos</Text></TouchableOpacity>
+          <Text style={styles.textButton}><Icon name="plus" size={20} color="#fff" />  Adicionar Produtos</Text></TouchableOpacity>
           
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setAlterPrecoModal(true)}>
-          <Text style={styles.textButton}>Alterar Preço</Text>
+          <Text style={styles.textButton}><Icon name="dollar" size={20} color="#fff" />  Alterar Preço</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setDeleteProdutotModal(true)}>
-          <Text style={styles.textButton}>Excluir Produtos</Text>
+          <Text style={styles.textButton}> <Icon name="trash" size={20} color="#fff" />  Excluir Produtos</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setDeleteOrderIdModal(true)} >
-          <Text style={styles.textButton}>Excluir Pedido Por id</Text>
+          <Text style={styles.textButton}><Icon name="trash" size={20} color="#fff" />  Excluir Pedido Por id</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setNovoLoginModal(true)}>
-          <Text style={styles.textButton}>Cadastrar novo Login</Text>
+          <Text style={styles.textButton}> <Icon name="user" size={20} color="#fff" />  Cadastrar novo Login</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setTodosPedidosModal(true)}>
-          <Text style={styles.textButton}>Todos Pedidos Abertos e Fechados / id</Text>
+          <Text style={styles.textButton}><Icon name="server" size={20} color="#fff" />  Todos Pedidos Abertos e Fechados / id</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setExportModal(true)}>
-          <Text style={styles.textButton}>Encerrar Aba Fechadas(Exportar p/ Excel)"</Text>
+          <Text style={styles.textButton}><Icon name="print" size={20} color="#fff" /> Exportar p/ planilha</Text>
           </TouchableOpacity>
 
 

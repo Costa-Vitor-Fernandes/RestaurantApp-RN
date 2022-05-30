@@ -11,7 +11,7 @@ import Fechadas from './Fechadas';
 import { Picker } from '@react-native-picker/picker';
 
 import { UserContext } from "./UserContext";
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 // const ip = '127.0.0.1:3001'
@@ -31,7 +31,9 @@ function TabFechadas({navigation}){
       headerRight: ()=> (<View
          style={{marginRight:Dimensions.get('window').width*0.05}}
           >
-            <Button onPress={()=>setRefresh(!refresh)} title="Atualizar" />
+            <TouchableOpacity onPress={()=>setRefresh(!refresh)}>
+            <Icon name="refresh" size={30} color="#999" />
+            </TouchableOpacity>
           </View>)
     })
     setTimeout(()=>{
@@ -267,7 +269,10 @@ function TabAbertas ({navigation}) {
           headerRight: ()=> (<View
              style={{marginRight:Dimensions.get('window').width*0.05}}
               >
-                <Button onPress={()=>setRefresh(!refresh)} title="Atualizar" />
+                <TouchableOpacity onPress={()=>setRefresh(!refresh)}>
+            <Icon name="refresh" size={30} color="#999" />
+            
+            </TouchableOpacity>
               </View>)
         })
         setTimeout(()=>{
@@ -507,11 +512,11 @@ const styles = StyleSheet.create({
 function Home() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Abertas" component={TabAbertas}
+      <Tab.Screen name="Abertas" component={TabAbertas} options={{tabBarIcon: ()=><Icon name="folder-open" size={30} color="#999" />}}
       />
-      <Tab.Screen name="Fechadas" component={TabFechadas}
+      <Tab.Screen name="Fechadas" component={TabFechadas} options={{tabBarIcon: ()=><Icon name="folder" size={30} color="#999" />}}
       />
-      <Tab.Screen name="Configurações" component={Configuracao}  />
+      <Tab.Screen name="Configurações" component={Configuracao} options={{tabBarIcon: ()=><Icon name="cogs" size={30} color="#999" />}}  />
     </Tab.Navigator>
   );
 }
