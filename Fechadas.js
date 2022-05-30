@@ -14,8 +14,8 @@ import { UserContext } from './UserContext';
 
 const numColumns = 3
 // const ip = '192.168.0.17:3001'
-const ip = '127.0.0.1:3001'
-// const ip = "limitless-lowlands-68334.herokuapp.com"
+// const ip = '127.0.0.1:3001'
+const ip = "limitless-lowlands-68334.herokuapp.com"
 const styles = StyleSheet.create({
     flatListContainer: {
       flex: 1,
@@ -226,7 +226,7 @@ export default function Fechadas (props) {
     },[props.refresh])
 
 const getClientesFechados = ()=>{
-        axios.get(`http://${ip}/todosClientesFechados`, {
+        axios.get(`https://${ip}/todosClientesFechados`, {
         }).then((res) => {
           const obj = []
             const arrClientes = res.data
@@ -240,7 +240,7 @@ const getClientesFechados = ()=>{
 const getComandaClienteFechado =(cliente)=>{
     console.log('getComandacliente')
   
-    axios.get(`http://${ip}/comandaFechadaCliente`, {
+    axios.get(`https://${ip}/comandaFechadaCliente`, {
         params: {
         cliente: cliente,
         token: token,
@@ -267,7 +267,7 @@ const  popUpComanda = (cliente) =>{
     getComandaClienteFechado(cliente)
 
     setModalVisible(!modalVisible)
-      axios.get(`http://${ip}/comandaFechadaCliente`, {
+      axios.get(`https://${ip}/comandaFechadaCliente`, {
         // body da req deve conter nome do cliente: nome e token: "TOKEN"
         params: {
           cliente: cliente,

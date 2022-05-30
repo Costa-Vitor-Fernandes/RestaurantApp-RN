@@ -15,8 +15,8 @@ import { UserContext } from "./UserContext";
 
 
 // const ip = '127.0.0.1:3001'
-const ip = '192.168.0.17:3001' // meu ip
-// const ip = 'limitless-lowlands-68334.herokuapp.com' 
+// const ip = '192.168.0.17:3001' // meu ip
+const ip = 'limitless-lowlands-68334.herokuapp.com' 
 const DeviceWidth =  Dimensions.get('window').width
 const numColumns = 3
 
@@ -249,7 +249,7 @@ function TabAbertas ({navigation}) {
   const getAllProducts = () =>{
     const obj = []
     obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
-    axios.get(`http://${ip}/allProducts`).then(async function (res) {
+    axios.get(`https://${ip}/allProducts`).then(async function (res) {
       const arrAllProducts = res.data.nomeproduto
       // await arrAllProducts.forEach((e,i,res)=>{
       //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
@@ -289,7 +289,7 @@ const addClientePopUp = () =>{
 const adicionarNovoCliente = () =>{
   setColor("green")
 
-    axios.post(`http://${ip}/addToComanda`, {
+    axios.post(`https://${ip}/addToComanda`, {
       cliente:novoCliente,
       quantidade:quantidade,
       nomeproduto:selectedProduct,

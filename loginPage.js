@@ -15,8 +15,8 @@ import { UserContext } from './UserContext';
  
 
 
- const ip = '192.168.0.17:3001'
-// const ip = "limitless-lowlands-68334.herokuapp.com" 
+//  const ip = '192.168.0.17:3001'
+const ip = "limitless-lowlands-68334.herokuapp.com" 
 export default function LoginScreen({navigation}) {
   
   const {token,setToken} = useContext(UserContext)
@@ -29,7 +29,7 @@ const loginButton = () =>{
    console.warn(user,password)
  
 // as vezes o ip muda
-    axios.post(`http://${ip}/login`, {
+    axios.post(`https://${ip}/login`, {
         username:user,
         password:password
     })

@@ -6,8 +6,8 @@ import { UserContext } from './UserContext';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios'
 // const ip = '127.0.0.1:3001'
-const ip ='192.168.0.17:3001'
-// const ip = "limitless-lowlands-68334.herokuapp.com"
+// const ip ='192.168.0.17:3001'
+const ip = "limitless-lowlands-68334.herokuapp.com"
 const numColumns=3
 const headerWidthSize = Dimensions.get('window').width*0.755
 
@@ -54,7 +54,7 @@ useEffect(()=>{
 const getAllProducts = () =>{
   const obj = []
   obj.push(<Picker.Item label="Escolha um produto" value="0" />)  
-  axios.get(`http://${ip}/allProducts`).then(async function (res) {
+  axios.get(`https://${ip}/allProducts`).then(async function (res) {
     const arrAllProducts = res.data.nomeproduto
     // await arrAllProducts.forEach((e,i,res)=>{
     //   obj.push(<Picker.Item label={res[i]} value={res[i]}></Picker.Item>)
@@ -158,7 +158,7 @@ function AddProductModal (props) {
     },[])
 
     const getProdutos =() =>{
-      axios.get(`http://${ip}/allProducts`, {
+      axios.get(`https://${ip}/allProducts`, {
       }).then((res) => {
         const obj = []
           const arrAllProducts = res.data.nomeproduto
@@ -183,7 +183,7 @@ function AddProductModal (props) {
     const addNovoProdutoAoBanco =() =>{
 
       
-      axios.post(`http://${ip}/addProduct`, {
+      axios.post(`https://${ip}/addProduct`, {
         nomeproduto:novoProduto,
         preco:preco,
         token:props.token,
@@ -358,7 +358,7 @@ const apply = () =>{
   }
   alert(`o produto ${props.selectedProduct} foi alterado tem como preço atual R$${preco}`)
 
-  axios.post(`http://${ip}/editarPrecoProduto`,{
+  axios.post(`https://${ip}/editarPrecoProduto`,{
     nomeproduto:props.selectedProduct,
     preco:preco,
     token: props.token
@@ -485,7 +485,7 @@ const excluirProduto = ()=>{
   // this if is only preventing axios cuz its getting jwt security installed
 if(!produto ===""){
 
-  axios.delete(`http://${ip}/deleteProduct`, {data:{
+  axios.delete(`https://${ip}/deleteProduct`, {data:{
     nomeproduto:props.selectedProduct,
     token: props.token
   }}).then(function (response) {
@@ -578,7 +578,7 @@ function NovoLoginModal (props) {
     alignSelf:'center',
     width:Dimensions.get('screen').width*0.8,
     height:Dimensions.get('screen').height*0.43,
-    marginTop:Dimensions.get('screen').height*0.30  ,
+    marginTop:Dimensions.get('screen').height*0.2  ,
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 35,
@@ -613,7 +613,7 @@ const aplicarNovoLogin = () =>{
 
   if(password === passwordConfirm && password !== ""){
     setAplicarColor('green')
-    axios.post(`http://${ip}/create`,{
+    axios.post(`https://${ip}/create`,{
       username:username,
       password:password,
       email:email,
@@ -717,7 +717,7 @@ function TodosPedidosModal (props) {
 
 
   const getTodosPedidosPorId =() =>{
-    axios.get(`http://${ip}/todosPedidosPorId`, {
+    axios.get(`https://${ip}/todosPedidosPorId`, {
     }).then((res) => {
       const obj = []
       res.data.id.forEach((e,i, res)=>{
@@ -1084,7 +1084,7 @@ setAplicarColor('#ddd')
   setAplicarColor('green')
 
   axios({
-    url: `http://${ip}/excelComandasFechadas`, //your url
+    url: `https://${ip}/excelComandasFechadas`, //your url
     method: 'GET',
     responseType: 'blob', // important
 }).then((response) => {
@@ -1103,7 +1103,7 @@ setTimeout(()=>{
   if(selectedAction ==="2"){
     setAplicarColor('green')
     axios({
-      url: `http://${ip}/excelTodasComandas`, //your url
+      url: `https://${ip}/excelTodasComandas`, //your url
       method: 'GET',
       responseType: 'blob', // important
   }).then((response) => {
@@ -1123,7 +1123,7 @@ setTimeout(()=>{
     setAplicarColor('green')
     
     axios({
-      url: `http://${ip}/excelComandasFechadas`, //your url
+      url: `https://${ip}/excelComandasFechadas`, //your url
       method: 'GET',
       responseType: 'blob', // important
   }).then((response) => {
@@ -1139,21 +1139,25 @@ setTimeout(()=>{
   alert('deletando todas comandas fechadas')
   setTimeout(()=>{
 
-    axios.delete(`http://${ip}/DeleteTodasComandasFechadas`,{
+    axios.delete(`https://${ip}/DeleteTodasComandasFechadas`,{data:{
+
       token:props.token
+    }
     })
-  },2000)
+  },5000)
   setTimeout(()=>{
     setAplicarColor('#ddd')
         },200)
 }
-if(selectedAction===4){
+if(selectedAction==="4"){
   setAplicarColor('green')
   alert('deletando todas comandas fechadas')
   setTimeout(()=>{
-    axios.delete(`http://${ip}/DeleteTodasComandasFechadas`, {
+    axios.delete(`https://${ip}/DeleteTodasComandasFechadas`, {data:{
       token:props.token
-    })
+    }
+  }
+    )
   },2000)
   setTimeout(()=>{
     setAplicarColor('#ddd')
@@ -1276,7 +1280,7 @@ const removerPorId = () =>{
   
   setAplicarColor("green")
   
-    axios.get(`http://${ip}/comandaCliente`, {
+    axios.get(`https://${ip}/comandaCliente`, {
         params: {
         cliente: nomeCliente,
         token: props.token,
@@ -1296,7 +1300,7 @@ const removerPorId = () =>{
       setId(obj)
       if(obj.includes(+idPedido)){
         console.log('axios delete')
-        axios.delete(`http://${ip}/deletePedido`,{data:{token:props.token, idpedido:idPedido}})
+        axios.delete(`https://${ip}/deletePedido`,{data:{token:props.token, idpedido:idPedido}})
         alert(`pedido de id${idPedido} foi deletado`)
         setAplicarColor('#ddd')
         setIdPedido("")
