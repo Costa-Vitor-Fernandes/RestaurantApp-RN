@@ -262,18 +262,19 @@ const fechar = () =>{
         }}>
      <View style={styles.modalView}>
          <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>ADICIONAR PRODUTOS</Text>
-       <View style={{flexDirection:"row", paddingTop:10,}}>
-
+       <View style={{flexDirection:"row", paddingTop:10, justifyContent:'center', alignItems:'center'}}>
+       <Icon name="list" size={30} color={"#999"} style={{marginRight:Dimensions.get('window').width*0.03, marginLeft:Dimensions.get('window').width*0.06}} />
        <TextInput  autoCapitalize={'none'} 
                   placeholder='adicione um produto' 
                   onChangeText={setNovoProduto} 
                   value={novoProduto} 
-                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.48, paddingLeft:10,height:30, marginRight:10,}}/>
+                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.38, paddingLeft:10,height:30, marginRight:10,}}/>
+                  <Icon name="dollar" size={30} color={"#999"} style={{marginRight:Dimensions.get('window').width*0.03}} />
        <TextInput autoCapitalize={'none'} 
                   placeholder='preco' 
                   onChangeText={setPreco} 
                   value={preco} 
-                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.23, paddingLeft:10,height:30}} />
+                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.15, paddingLeft:10,height:30}} />
                   
         </View>
        
@@ -389,10 +390,11 @@ const apply = () =>{
       }}>
    <View style={styles.modalView}>
      <Text style={{marginBottom:30}}>Alterar Preços</Text>
-     <View style={{flexDirection:"row"}}>
+     <View style={{flexDirection:"row", justifyContent:'center', alignItems:'center',}}>
+     <Icon name="list" size={30} color="#999" style={{marginRight:10,}} />
      <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.45,height: Dimensions.get('window').height*0.05}}
+              style={{width:Dimensions.get('window').width*0.34,height: Dimensions.get('window').height*0.05}}
         selectedValue={props.selectedProduct}
         onValueChange={(itemValue, itemIndex) =>
           props.setSelectedProduct(itemValue)
@@ -400,12 +402,12 @@ const apply = () =>{
           {props.allProducts}
         
       </Picker>
-
+      <Icon name="dollar" size={30} color="#999" style={{marginRight:10,marginLeft:10,}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Novo preco' 
                 onChangeText={setPreco} 
                 value={preco} 
-                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.25,height: Dimensions.get('window').height*0.05, paddingLeft:10,}} />
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.2,height: Dimensions.get('window').height*0.05, paddingLeft:10,}} />
       </View>
      
 
@@ -517,11 +519,12 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
-     <Text style={{paddingBottom: Dimensions.get('window').height*0.04}}>CUIDADO AO EXCLUIR</Text>
-     <View style={{flexDirection:"row"}}>
+     <Text style={{paddingBottom: Dimensions.get('window').height*0.04}}>CUIDADO AO EXCLUIR <Icon name="trash" size={20} color={"#999"} /></Text>
+     <View style={{flexDirection:"row", justifyContent:'center', alignItems:"center",}}>
+      <Icon name="list" size={30} color="#999"  />
      <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.7,height: Dimensions.get('window').height*0.05}}
+              style={{marginLeft:10, paddingLeft:10,width:Dimensions.get('window').width*0.62,height: Dimensions.get('window').height*0.05}}
         selectedValue={props.selectedProduct}
         onValueChange={(itemValue, itemIndex) =>
           props.setSelectedProduct(itemValue)
@@ -529,7 +532,7 @@ props.setState(!props.state)
           {props.allProducts}
         
       </Picker>
-
+     
      </View>
      
 
@@ -655,27 +658,38 @@ props.setState(!props.state)
       }}>
    <View style={styles.modalView}>
 <Text style={{marginBottom:Dimensions.get('window').height*0.04}}>ADICIONAR NOVO LOGIN</Text>
+<View style={{flexDirection:'row'}}>
+<Icon name="user"size={20} color="#999" style={{marginRight:10}} />
      <TextInput  autoCapitalize={'none'} 
                 placeholder='Adicione um nome de usuário/email' 
                 onChangeText={setUsername} 
                 value={username} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10,}}/>
+                </View>
+    <View style={{flexDirection:'row', justifyContent:'center',}}>
+    <Icon name="envelope"size={20} color="#999" style={{marginRight:14,}} />
       <TextInput autoCapitalize={'none'} 
                 placeholder='Email' 
                 onChangeText={setEmail} 
                 value={email} 
-                style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10}} />
+                style={{backgroundColor:"#eee", width:"77%", paddingLeft:10,height:30, marginBottom:10, marginRight:10,}} />
+   </View>
+    <View style={{flexDirection:'row'}}>
+    <Icon name="lock"size={20} color="#999" style={{marginRight:12}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Senha' 
                 onChangeText={setPassword} 
                 value={password} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10}} />
+     </View>
+     <View style={{flexDirection:'row'}}>
+    <Icon name="unlock"size={20} color="#999" style={{marginRight:7}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Confirmação de senha' 
                 onChangeText={setPasswordConfirm} 
                 value={passwordConfirm} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30}} />
-     
+     </View>
 
        <View style={{width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
          <TouchableOpacity
@@ -1332,19 +1346,20 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
-       <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>REMOVER PEDIDO POR ID</Text>
+       <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>REMOVER PEDIDO POR ID <Icon name="trash" size={20} color="#999" style={{marginLeft:Dimensions.get('window').width*0.20,}} /></Text>
      <View style={{flexDirection:"row", paddingTop:10,}}>
-
+      <Icon name="user" size={20} color="#999" style={{marginRight:10,}} />
      <TextInput  autoCapitalize={'none'} 
                 placeholder='Nome do Cliente' 
                 onChangeText={setNomeCliente} 
                 value={nomeCliente} 
-                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.48, paddingLeft:10,height:30, marginRight:10,}}/>
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.38, paddingLeft:10,height:30, marginRight:10,}}/>
+                <Icon name="hashtag" size={20} color="#999" style={{marginRight:10,}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='id' 
                 onChangeText={setIdPedido} 
                 value={idPedido} 
-                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.23, paddingLeft:10,height:30}} />
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.18, paddingLeft:10,height:30}} />
                 
       </View>
      

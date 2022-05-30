@@ -381,6 +381,8 @@ const styles = StyleSheet.create({
     marginTop: 22
   },
   modalView: {
+    width:Dimensions.get('window').width*0.8,
+
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
@@ -433,9 +435,9 @@ const styles = StyleSheet.create({
   textinput:{
     padding:10,
     backgroundColor:"#eee",
-    height:Dimensions.get('window').height*0.04,
+    height:Dimensions.get('window').height*0.07,
     marginVertical:Dimensions.get('window').height*0.02,
-    width:Dimensions.get("window").height*0.7
+    width:Dimensions.get("window").width*0.75 
   }
 
 });
@@ -462,7 +464,7 @@ const styles = StyleSheet.create({
       />
           <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.3  }}
+              style={{width:Dimensions.get('window').width*0.75, backgroundColor:"#eee"  }}
         selectedValue={selectedProduct}
         onValueChange={(itemValue, itemIndex) =>
           setSelectedProduct(itemValue)
