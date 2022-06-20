@@ -13,7 +13,7 @@ const ip = "limitless-lowlands-68334.herokuapp.com"
 const numColumns=3
 const headerWidthSize = Dimensions.get('window').width*0.755
 
-export default function Configuracao (){
+export default function Configuracao (props){
 
 
 
@@ -51,7 +51,7 @@ export default function Configuracao (){
 
 useEffect(()=>{
   getAllProducts()
-},[])
+},[props.refresh])
 
 
 
@@ -440,7 +440,7 @@ return(<View></View>)
 function DeleteModal (props) {
 
   const [excluirColor,setExcluirColor]=useState("#ddd")
-  const [produto, setProduto] =useState('')
+  
 
   const styles = StyleSheet.create({
   centeredView: {
@@ -482,26 +482,32 @@ function DeleteModal (props) {
 })
 
 const excluirProduto = ()=>{
-  setExcluirColor("green")
-  console.log(props.token, 'token')
- 
+  // console.log(props.selectedProduct, 'produto')
+
   
-  // this if is only preventing axios cuz its getting jwt security installed
-if(!produto ===""){
+  if(props.selectedProduct === 0 || props.selectedProduct === "0" || props.selectedProduct === "" ){
+    alert("Escolha um produto para excluir")
+    return
+  }
+  setExcluirColor("green") 
+
 
   axios.delete(`https://${ip}/deleteProduct`, {data:{
     nomeproduto:props.selectedProduct,
     token: props.token
   }}).then(function (response) {
-    console.warn(response.data);
+    // console.warn(response.data);
   }).catch(error => console.log(error));
   
-}
+
   setExcluirColor("#eee")
+  alert(`produto ${props.selectedProduct} foi excluido`)
+  props.setState(!props.state)
 }
 
 const fechar = () =>{
 props.setState(!props.state)
+props.setSelectedProduct("")
 }
   if(props.state){
     
@@ -614,6 +620,7 @@ const aplicarNovoLogin = () =>{
     setTimeout(()=>{setAplicarColor('#ddd')},200)
     return alert('preencha todos os campos correntamente')
   }
+  
 
 
   if(password === passwordConfirm && password !== ""){
@@ -1241,7 +1248,6 @@ setSelectedAction(itemValue)
 </Modal>
 </View>)
 }
-
 function DeleteOrderIdModal (props){
 
   const [id,setId] = useState([])

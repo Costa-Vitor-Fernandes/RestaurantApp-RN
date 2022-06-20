@@ -238,12 +238,14 @@ function TabAbertas ({navigation}) {
   const [modalVisible,setModalVisible] = useState(false)
   const [refresh, setRefresh] = useState(false)
   const [color,setColor]= useState("#24a0ed")
-
+  
   const [allProducts, setAllProducts]=useState('')
   const [selectedProduct, setSelectedProduct] = useState("")
-
+  
   const {token,setToken} = useContext(UserContext)
   
+  const voltarColor = "#24a0ed"
+
   useEffect(()=>{
     getAllProducts()
   },[])
@@ -292,6 +294,15 @@ const addClientePopUp = () =>{
   // esse estado vai pra Lista que vai renderizar no lugar do textinput de listinha de produto
 }
 const adicionarNovoCliente = () =>{
+  if(novoCliente === "" || selectedProduct === "" || selectedProduct === "Escolha um Produto"){
+    setColor('red')
+    alert("Preencha os campos corretamente")
+    setTimeout(()=>{
+      setColor("#24a0ed")
+      
+    },1000)
+    return
+  }
   setColor("green")
 
     axios.post(`https://${ip}/addToComanda`, {
@@ -432,6 +443,15 @@ const styles = StyleSheet.create({
     height:45,
     justifyContent:'center',
   },
+  voltar:{
+    backgroundColor: voltarColor,
+    borderRadius:50,
+    paddingHorizontal:10,
+    marginTop:10,
+    marginRight:10,
+    height:45,
+    justifyContent:'center',
+  },
   textinput:{
     padding:10,
     backgroundColor:"#eee",
@@ -482,7 +502,7 @@ const styles = StyleSheet.create({
       <View style={{flexDirection: 'row', justifyContent:'center', alignItems:'flex-end' }}>
 
               <TouchableOpacity
-                style={styles.adicionar}
+                style={styles.voltar}
                 onPress={() => {
                   //  console.log('pressed')
                   setModalVisible(!modalVisible)}}
@@ -509,6 +529,30 @@ const styles = StyleSheet.create({
     </View>
   )
 }
+function TabConfiguracao ({navigation}){
+  const [refresh, setRefresh] = useState(false)
+
+  useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerRight: ()=> (<View
+         style={{marginRight:Dimensions.get('window').width*0.05}}
+          >
+            <TouchableOpacity onPress={()=>setRefresh(!refresh)}>
+            <Icon name="refresh" size={30} color="#999" />
+            </TouchableOpacity>
+          </View>)
+    })
+    setTimeout(()=>{
+      setRefresh(false)
+    
+    },1000) // checar esse tempo de porta dps
+  },[navigation, refresh])
+  return(
+    <View>
+      <Configuracao refresh={refresh} />
+    </View>
+  )
+}
 
 
 function Home() {
@@ -518,7 +562,7 @@ function Home() {
       />
       <Tab.Screen name="Fechadas" component={TabFechadas} options={{tabBarIcon: ()=><Icon name="folder" size={30} color="#999" />}}
       />
-      <Tab.Screen name="Configurações" component={Configuracao} options={{tabBarIcon: ()=><Icon name="cogs" size={30} color="#999" />}}  />
+      <Tab.Screen name="Configurações" component={TabConfiguracao} options={{tabBarIcon: ()=><Icon name="cogs" size={30} color="#999" />}}  />
     </Tab.Navigator>
   );
 }
