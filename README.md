@@ -1,4 +1,4 @@
-# RestaurantApp-RN-Pesto
+# restaurant-app-rn-pesto
 
 This is my first fully designed project. I had the inspiration when my family started a small restaurant business last year, and after I saw their difficulties with organizing the orders with poorly designed apps avaiable on the play store. So the UI is written in Portuguese, but most of the code is written in english.
 
