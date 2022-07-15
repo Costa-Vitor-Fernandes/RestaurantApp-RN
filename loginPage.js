@@ -17,8 +17,6 @@ const myIcon = <Icon name="cog" size={30} color="#999" />;
 import { UserContext } from './UserContext';
  
 
-
-//  const ip = '192.168.0.17:3001'
 const ip = "limitless-lowlands-68334.herokuapp.com" 
 export default function LoginScreen({navigation}) {
   
@@ -29,21 +27,21 @@ const [password,setPassword] = useState("")
 
  
 const loginButton = () =>{
-   console.warn(user,password)
+  //  console.warn(user,password)
  
 // as vezes o ip muda
     axios.post(`https://${ip}/login`, {
         username:user,
-        password:password
+        password:password, 
     })
     .then(function (response) {
-      console.log(response.data)
+      // console.log(response.data)
         if (response.data.auth){
             setToken(response.data.token)
             navigation.navigate("Home")
-            // redirect to main page / home page whatever
+            // redirect to main page
         }
-        // console.warn(response.data.token);
+       
       })
       .catch(function (error) {
       alert("Login inválido")

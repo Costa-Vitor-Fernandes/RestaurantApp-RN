@@ -238,7 +238,7 @@ const getClientesFechados = ()=>{
 }
 
 const getComandaClienteFechado =(cliente)=>{
-    console.log('getComandacliente')
+    // console.log('getComandacliente')
   
     axios.get(`https://${ip}/comandaFechadaCliente`, {
         params: {
@@ -255,7 +255,7 @@ const getComandaClienteFechado =(cliente)=>{
       res.data.id.forEach((e,i, res)=>{
         obj.push(res[i])
       })
-      console.log(obj)
+      // console.log(obj)
       setId(obj)
       setNomeProduto(res.data.nomeproduto)
       setPreco(res.data.preco)

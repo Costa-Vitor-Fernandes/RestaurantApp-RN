@@ -128,7 +128,7 @@ setDeleteProdutotModal(del)
 
           {/* MODAL */}
           {addProdutosModal? <AddProductModal state={addProdutosModal} setState={addProdutos} token={token} /> : null}
-          {alterPrecoModal? <AlterPrecoModal state={alterPrecoModal} setState={alterPreco} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} /> : null}
+          {alterPrecoModal? <AlterPrecoModal state={alterPrecoModal} setState={alterPreco} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} token={token} />  : null}
           {deleteProdutoModal? <DeleteModal state={deleteProdutoModal} setState={deleteProduto} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} token={token} /> : null}
           {novoLoginModal? <NovoLoginModal state={novoLoginModal} setState={novoLogin} token={token} /> : null}
           {todosPedidosModal? <TodosPedidosModal state={todosPedidosModal} setState={todosPedidosId} /> : null}
@@ -366,7 +366,7 @@ const apply = () =>{
     preco:preco,
     token: props.token
 }).then(function (response) {
-  console.log(response.data);
+  // console.log(response.data);
 })
 .catch(function (error) {
 // alert("Login inválido")
@@ -632,7 +632,7 @@ const aplicarNovoLogin = () =>{
       token:props.token
 
   }).then(function (response) {
-    console.log(response.data)
+    // console.log(response.data)
     
     // console.warn(response.data.token);
   })
@@ -1095,7 +1095,7 @@ function ExportModal (props) {
 })
 
 const excelAplicar = ()=>{
-  console.log('aplicar export modal', selectedAction)
+  // console.log('aplicar export modal', selectedAction)
   if(selectedAction === "0" || selectedAction === ""){
     setAplicarColor('red')
     alert('selecione uma ação')
@@ -1317,11 +1317,11 @@ const removerPorId = () =>{
       res.data.id.forEach((e,i, res)=>{
         obj.push(res[i])
       })
-      console.log(obj)
-      console.log(obj.includes(+idPedido), 'includes127')
+      // console.log(obj)
+      // console.log(obj.includes(+idPedido), 'includes127')
       setId(obj)
       if(obj.includes(+idPedido)){
-        console.log('axios delete')
+        // console.log('axios delete')
         axios.delete(`https://${ip}/deletePedido`,{data:{token:props.token, idpedido:idPedido}})
         alert(`pedido de id${idPedido} foi deletado`)
         setAplicarColor('#ddd')

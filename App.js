@@ -327,7 +327,7 @@ const adicionarNovoCliente = () =>{
   
 
 
-  console.log('info do que da sendo adicionado', novoCliente, quantidade, selectedProduct)
+  // console.log('info do que da sendo adicionado', novoCliente, quantidade, selectedProduct)
   
   setTimeout(()=>{
     setRefresh(true)
