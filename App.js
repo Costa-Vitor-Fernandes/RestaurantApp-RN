@@ -11,7 +11,7 @@ import Fechadas from './Fechadas';
 import { Picker } from '@react-native-picker/picker';
 
 import { UserContext } from "./UserContext";
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 // const ip = '127.0.0.1:3001'
@@ -31,7 +31,9 @@ function TabFechadas({navigation}){
       headerRight: ()=> (<View
          style={{marginRight:Dimensions.get('window').width*0.05}}
           >
-            <Button onPress={()=>setRefresh(!refresh)} title="Atualizar" />
+            <TouchableOpacity onPress={()=>setRefresh(!refresh)}>
+            <Icon name="refresh" size={30} color="#999" />
+            </TouchableOpacity>
           </View>)
     })
     setTimeout(()=>{
@@ -236,12 +238,14 @@ function TabAbertas ({navigation}) {
   const [modalVisible,setModalVisible] = useState(false)
   const [refresh, setRefresh] = useState(false)
   const [color,setColor]= useState("#24a0ed")
-
+  
   const [allProducts, setAllProducts]=useState('')
   const [selectedProduct, setSelectedProduct] = useState("")
-
+  
   const {token,setToken} = useContext(UserContext)
   
+  const voltarColor = "#24a0ed"
+
   useEffect(()=>{
     getAllProducts()
   },[])
@@ -267,7 +271,10 @@ function TabAbertas ({navigation}) {
           headerRight: ()=> (<View
              style={{marginRight:Dimensions.get('window').width*0.05}}
               >
-                <Button onPress={()=>setRefresh(!refresh)} title="Atualizar" />
+                <TouchableOpacity onPress={()=>setRefresh(!refresh)}>
+            <Icon name="refresh" size={30} color="#999" />
+            
+            </TouchableOpacity>
               </View>)
         })
         setTimeout(()=>{
@@ -287,6 +294,15 @@ const addClientePopUp = () =>{
   // esse estado vai pra Lista que vai renderizar no lugar do textinput de listinha de produto
 }
 const adicionarNovoCliente = () =>{
+  if(novoCliente === "" || selectedProduct === "" || selectedProduct === "Escolha um Produto"){
+    setColor('red')
+    alert("Preencha os campos corretamente")
+    setTimeout(()=>{
+      setColor("#24a0ed")
+      
+    },1000)
+    return
+  }
   setColor("green")
 
     axios.post(`https://${ip}/addToComanda`, {
@@ -311,7 +327,7 @@ const adicionarNovoCliente = () =>{
   
 
 
-  console.log('info do que da sendo adicionado', novoCliente, quantidade, selectedProduct)
+  // console.log('info do que da sendo adicionado', novoCliente, quantidade, selectedProduct)
   
   setTimeout(()=>{
     setRefresh(true)
@@ -376,6 +392,8 @@ const styles = StyleSheet.create({
     marginTop: 22
   },
   modalView: {
+    width:Dimensions.get('window').width*0.8,
+
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
@@ -425,12 +443,21 @@ const styles = StyleSheet.create({
     height:45,
     justifyContent:'center',
   },
+  voltar:{
+    backgroundColor: voltarColor,
+    borderRadius:50,
+    paddingHorizontal:10,
+    marginTop:10,
+    marginRight:10,
+    height:45,
+    justifyContent:'center',
+  },
   textinput:{
     padding:10,
     backgroundColor:"#eee",
-    height:Dimensions.get('window').height*0.04,
+    height:Dimensions.get('window').height*0.07,
     marginVertical:Dimensions.get('window').height*0.02,
-    width:Dimensions.get("window").height*0.7
+    width:Dimensions.get("window").width*0.75 
   }
 
 });
@@ -457,7 +484,7 @@ const styles = StyleSheet.create({
       />
           <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.3  }}
+              style={{width:Dimensions.get('window').width*0.75, backgroundColor:"#eee"  }}
         selectedValue={selectedProduct}
         onValueChange={(itemValue, itemIndex) =>
           setSelectedProduct(itemValue)
@@ -475,7 +502,7 @@ const styles = StyleSheet.create({
       <View style={{flexDirection: 'row', justifyContent:'center', alignItems:'flex-end' }}>
 
               <TouchableOpacity
-                style={styles.adicionar}
+                style={styles.voltar}
                 onPress={() => {
                   //  console.log('pressed')
                   setModalVisible(!modalVisible)}}
@@ -502,16 +529,40 @@ const styles = StyleSheet.create({
     </View>
   )
 }
+function TabConfiguracao ({navigation}){
+  const [refresh, setRefresh] = useState(false)
+
+  useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerRight: ()=> (<View
+         style={{marginRight:Dimensions.get('window').width*0.05}}
+          >
+            <TouchableOpacity onPress={()=>setRefresh(!refresh)}>
+            <Icon name="refresh" size={30} color="#999" />
+            </TouchableOpacity>
+          </View>)
+    })
+    setTimeout(()=>{
+      setRefresh(false)
+    
+    },1000) // checar esse tempo de porta dps
+  },[navigation, refresh])
+  return(
+    <View>
+      <Configuracao refresh={refresh} />
+    </View>
+  )
+}
 
 
 function Home() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Abertas" component={TabAbertas}
+      <Tab.Screen name="Abertas" component={TabAbertas} options={{tabBarIcon: ()=><Icon name="folder-open" size={30} color="#999" />}}
       />
-      <Tab.Screen name="Fechadas" component={TabFechadas}
+      <Tab.Screen name="Fechadas" component={TabFechadas} options={{tabBarIcon: ()=><Icon name="folder" size={30} color="#999" />}}
       />
-      <Tab.Screen name="Configurações" component={Configuracao}  />
+      <Tab.Screen name="Configurações" component={TabConfiguracao} options={{tabBarIcon: ()=><Icon name="cogs" size={30} color="#999" />}}  />
     </Tab.Navigator>
   );
 }

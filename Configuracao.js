@@ -5,13 +5,17 @@ import { BottomTabBar } from '@react-navigation/bottom-tabs'
 import { UserContext } from './UserContext';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios'
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 // const ip = '127.0.0.1:3001'
 // const ip ='192.168.0.17:3001'
 const ip = "limitless-lowlands-68334.herokuapp.com"
 const numColumns=3
 const headerWidthSize = Dimensions.get('window').width*0.755
 
-export default function Configuracao (){
+export default function Configuracao (props){
+
+
 
   const {token,setToken} = useContext(UserContext)
 
@@ -47,7 +51,7 @@ export default function Configuracao (){
 
 useEffect(()=>{
   getAllProducts()
-},[])
+},[props.refresh])
 
 
 
@@ -92,41 +96,39 @@ setDeleteProdutotModal(del)
   }
     return(
       <View style={styles.mainContainer}>
-        <Text>
-          Configurações Configurações Configurações 
-        </Text>         
+   
           <TouchableOpacity style={styles.basicButton} onPress={()=>setAddProdutosModal(true)}>
-          <Text style={styles.textButton}>Adicionar Produtos</Text></TouchableOpacity>
+          <Text style={styles.textButton}><Icon name="plus" size={20} color="#fff" />  Adicionar Produtos</Text></TouchableOpacity>
           
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setAlterPrecoModal(true)}>
-          <Text style={styles.textButton}>Alterar Preço</Text>
+          <Text style={styles.textButton}><Icon name="dollar" size={20} color="#fff" />  Alterar Preço</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setDeleteProdutotModal(true)}>
-          <Text style={styles.textButton}>Excluir Produtos</Text>
+          <Text style={styles.textButton}> <Icon name="trash" size={20} color="#fff" />  Excluir Produtos</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setDeleteOrderIdModal(true)} >
-          <Text style={styles.textButton}>Excluir Pedido Por id</Text>
+          <Text style={styles.textButton}><Icon name="trash" size={20} color="#fff" />  Excluir Pedido Por id</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setNovoLoginModal(true)}>
-          <Text style={styles.textButton}>Cadastrar novo Login</Text>
+          <Text style={styles.textButton}> <Icon name="user" size={20} color="#fff" />  Cadastrar novo Login</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setTodosPedidosModal(true)}>
-          <Text style={styles.textButton}>Todos Pedidos Abertos e Fechados / id</Text>
+          <Text style={styles.textButton}><Icon name="server" size={20} color="#fff" />  Todos Pedidos Abertos e Fechados / id</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.basicButton} onPress={()=>setExportModal(true)}>
-          <Text style={styles.textButton}>Encerrar Aba Fechadas(Exportar p/ Excel)"</Text>
+          <Text style={styles.textButton}><Icon name="print" size={20} color="#fff" /> Exportar p/ planilha</Text>
           </TouchableOpacity>
 
 
           {/* MODAL */}
           {addProdutosModal? <AddProductModal state={addProdutosModal} setState={addProdutos} token={token} /> : null}
-          {alterPrecoModal? <AlterPrecoModal state={alterPrecoModal} setState={alterPreco} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} /> : null}
+          {alterPrecoModal? <AlterPrecoModal state={alterPrecoModal} setState={alterPreco} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} token={token} />  : null}
           {deleteProdutoModal? <DeleteModal state={deleteProdutoModal} setState={deleteProduto} allProducts={allProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} token={token} /> : null}
           {novoLoginModal? <NovoLoginModal state={novoLoginModal} setState={novoLogin} token={token} /> : null}
           {todosPedidosModal? <TodosPedidosModal state={todosPedidosModal} setState={todosPedidosId} /> : null}
@@ -260,18 +262,19 @@ const fechar = () =>{
         }}>
      <View style={styles.modalView}>
          <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>ADICIONAR PRODUTOS</Text>
-       <View style={{flexDirection:"row", paddingTop:10,}}>
-
+       <View style={{flexDirection:"row", paddingTop:10, justifyContent:'center', alignItems:'center'}}>
+       <Icon name="list" size={30} color={"#999"} style={{marginRight:Dimensions.get('window').width*0.03, marginLeft:Dimensions.get('window').width*0.06}} />
        <TextInput  autoCapitalize={'none'} 
                   placeholder='adicione um produto' 
                   onChangeText={setNovoProduto} 
                   value={novoProduto} 
-                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.48, paddingLeft:10,height:30, marginRight:10,}}/>
+                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.38, paddingLeft:10,height:30, marginRight:10,}}/>
+                  <Icon name="dollar" size={30} color={"#999"} style={{marginRight:Dimensions.get('window').width*0.03}} />
        <TextInput autoCapitalize={'none'} 
                   placeholder='preco' 
                   onChangeText={setPreco} 
                   value={preco} 
-                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.23, paddingLeft:10,height:30}} />
+                  style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.15, paddingLeft:10,height:30}} />
                   
         </View>
        
@@ -363,7 +366,7 @@ const apply = () =>{
     preco:preco,
     token: props.token
 }).then(function (response) {
-  console.log(response.data);
+  // console.log(response.data);
 })
 .catch(function (error) {
 // alert("Login inválido")
@@ -387,10 +390,11 @@ const apply = () =>{
       }}>
    <View style={styles.modalView}>
      <Text style={{marginBottom:30}}>Alterar Preços</Text>
-     <View style={{flexDirection:"row"}}>
+     <View style={{flexDirection:"row", justifyContent:'center', alignItems:'center',}}>
+     <Icon name="list" size={30} color="#999" style={{marginRight:10,}} />
      <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.45,height: Dimensions.get('window').height*0.05}}
+              style={{width:Dimensions.get('window').width*0.34,height: Dimensions.get('window').height*0.05}}
         selectedValue={props.selectedProduct}
         onValueChange={(itemValue, itemIndex) =>
           props.setSelectedProduct(itemValue)
@@ -398,12 +402,12 @@ const apply = () =>{
           {props.allProducts}
         
       </Picker>
-
+      <Icon name="dollar" size={30} color="#999" style={{marginRight:10,marginLeft:10,}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Novo preco' 
                 onChangeText={setPreco} 
                 value={preco} 
-                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.25,height: Dimensions.get('window').height*0.05, paddingLeft:10,}} />
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.2,height: Dimensions.get('window').height*0.05, paddingLeft:10,}} />
       </View>
      
 
@@ -436,7 +440,7 @@ return(<View></View>)
 function DeleteModal (props) {
 
   const [excluirColor,setExcluirColor]=useState("#ddd")
-  const [produto, setProduto] =useState('')
+  
 
   const styles = StyleSheet.create({
   centeredView: {
@@ -478,26 +482,32 @@ function DeleteModal (props) {
 })
 
 const excluirProduto = ()=>{
-  setExcluirColor("green")
-  console.log(props.token, 'token')
- 
+  // console.log(props.selectedProduct, 'produto')
+
   
-  // this if is only preventing axios cuz its getting jwt security installed
-if(!produto ===""){
+  if(props.selectedProduct === 0 || props.selectedProduct === "0" || props.selectedProduct === "" ){
+    alert("Escolha um produto para excluir")
+    return
+  }
+  setExcluirColor("green") 
+
 
   axios.delete(`https://${ip}/deleteProduct`, {data:{
     nomeproduto:props.selectedProduct,
     token: props.token
   }}).then(function (response) {
-    console.warn(response.data);
+    // console.warn(response.data);
   }).catch(error => console.log(error));
   
-}
+
   setExcluirColor("#eee")
+  alert(`produto ${props.selectedProduct} foi excluido`)
+  props.setState(!props.state)
 }
 
 const fechar = () =>{
 props.setState(!props.state)
+props.setSelectedProduct("")
 }
   if(props.state){
     
@@ -515,11 +525,12 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
-     <Text style={{paddingBottom: Dimensions.get('window').height*0.04}}>CUIDADO AO EXCLUIR</Text>
-     <View style={{flexDirection:"row"}}>
+     <Text style={{paddingBottom: Dimensions.get('window').height*0.04}}>CUIDADO AO EXCLUIR <Icon name="trash" size={20} color={"#999"} /></Text>
+     <View style={{flexDirection:"row", justifyContent:'center', alignItems:"center",}}>
+      <Icon name="list" size={30} color="#999"  />
      <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.7,height: Dimensions.get('window').height*0.05}}
+              style={{marginLeft:10, paddingLeft:10,width:Dimensions.get('window').width*0.62,height: Dimensions.get('window').height*0.05}}
         selectedValue={props.selectedProduct}
         onValueChange={(itemValue, itemIndex) =>
           props.setSelectedProduct(itemValue)
@@ -527,7 +538,7 @@ props.setState(!props.state)
           {props.allProducts}
         
       </Picker>
-
+     
      </View>
      
 
@@ -609,6 +620,7 @@ const aplicarNovoLogin = () =>{
     setTimeout(()=>{setAplicarColor('#ddd')},200)
     return alert('preencha todos os campos correntamente')
   }
+  
 
 
   if(password === passwordConfirm && password !== ""){
@@ -620,7 +632,7 @@ const aplicarNovoLogin = () =>{
       token:props.token
 
   }).then(function (response) {
-    console.log(response.data)
+    // console.log(response.data)
     
     // console.warn(response.data.token);
   })
@@ -653,27 +665,38 @@ props.setState(!props.state)
       }}>
    <View style={styles.modalView}>
 <Text style={{marginBottom:Dimensions.get('window').height*0.04}}>ADICIONAR NOVO LOGIN</Text>
+<View style={{flexDirection:'row'}}>
+<Icon name="user"size={20} color="#999" style={{marginRight:10}} />
      <TextInput  autoCapitalize={'none'} 
                 placeholder='Adicione um nome de usuário/email' 
                 onChangeText={setUsername} 
                 value={username} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10,}}/>
+                </View>
+    <View style={{flexDirection:'row', justifyContent:'center',}}>
+    <Icon name="envelope"size={20} color="#999" style={{marginRight:14,}} />
       <TextInput autoCapitalize={'none'} 
                 placeholder='Email' 
                 onChangeText={setEmail} 
                 value={email} 
-                style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10}} />
+                style={{backgroundColor:"#eee", width:"77%", paddingLeft:10,height:30, marginBottom:10, marginRight:10,}} />
+   </View>
+    <View style={{flexDirection:'row'}}>
+    <Icon name="lock"size={20} color="#999" style={{marginRight:12}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Senha' 
                 onChangeText={setPassword} 
                 value={password} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30, marginBottom:10}} />
+     </View>
+     <View style={{flexDirection:'row'}}>
+    <Icon name="unlock"size={20} color="#999" style={{marginRight:7}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='Confirmação de senha' 
                 onChangeText={setPasswordConfirm} 
                 value={passwordConfirm} 
                 style={{backgroundColor:"#eee", width:"80%", paddingLeft:10,height:30}} />
-     
+     </View>
 
        <View style={{width:Dimensions.get('screen').width*0.8, marginBottom:10, marginTop:18,flexDirection:'row', justifyContent:'space-around'}}>
          <TouchableOpacity
@@ -1072,7 +1095,7 @@ function ExportModal (props) {
 })
 
 const excelAplicar = ()=>{
-  console.log('aplicar export modal', selectedAction)
+  // console.log('aplicar export modal', selectedAction)
   if(selectedAction === "0" || selectedAction === ""){
     setAplicarColor('red')
     alert('selecione uma ação')
@@ -1225,7 +1248,6 @@ setSelectedAction(itemValue)
 </Modal>
 </View>)
 }
-
 function DeleteOrderIdModal (props){
 
   const [id,setId] = useState([])
@@ -1295,11 +1317,11 @@ const removerPorId = () =>{
       res.data.id.forEach((e,i, res)=>{
         obj.push(res[i])
       })
-      console.log(obj)
-      console.log(obj.includes(+idPedido), 'includes127')
+      // console.log(obj)
+      // console.log(obj.includes(+idPedido), 'includes127')
       setId(obj)
       if(obj.includes(+idPedido)){
-        console.log('axios delete')
+        // console.log('axios delete')
         axios.delete(`https://${ip}/deletePedido`,{data:{token:props.token, idpedido:idPedido}})
         alert(`pedido de id${idPedido} foi deletado`)
         setAplicarColor('#ddd')
@@ -1330,19 +1352,20 @@ props.setState(!props.state)
         
       }}>
    <View style={styles.modalView}>
-       <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>REMOVER PEDIDO POR ID</Text>
+       <Text style={{paddingBottom:Dimensions.get('window').height*0.03}}>REMOVER PEDIDO POR ID <Icon name="trash" size={20} color="#999" style={{marginLeft:Dimensions.get('window').width*0.20,}} /></Text>
      <View style={{flexDirection:"row", paddingTop:10,}}>
-
+      <Icon name="user" size={20} color="#999" style={{marginRight:10,}} />
      <TextInput  autoCapitalize={'none'} 
                 placeholder='Nome do Cliente' 
                 onChangeText={setNomeCliente} 
                 value={nomeCliente} 
-                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.48, paddingLeft:10,height:30, marginRight:10,}}/>
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.38, paddingLeft:10,height:30, marginRight:10,}}/>
+                <Icon name="hashtag" size={20} color="#999" style={{marginRight:10,}} />
      <TextInput autoCapitalize={'none'} 
                 placeholder='id' 
                 onChangeText={setIdPedido} 
                 value={idPedido} 
-                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.23, paddingLeft:10,height:30}} />
+                style={{backgroundColor:"#eee", width:Dimensions.get('window').width*0.18, paddingLeft:10,height:30}} />
                 
       </View>
      

@@ -11,6 +11,7 @@ import {
 import {Picker} from '@react-native-picker/picker';
 import axios from 'axios';
 import { UserContext } from './UserContext';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const numColumns = 3;
 
@@ -330,7 +331,7 @@ const headerWidthSize = Dimensions.get('window').width*0.755
        
               <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.7}}
+              style={{width:Dimensions.get('window').width*0.65, backgroundColor:"#eee", height: Dimensions.get("window").height*0.07, marginRight:10}}
         selectedValue={selectedProduct}
         onValueChange={(itemValue, itemIndex) =>
           setSelectedProduct(itemValue)
@@ -344,7 +345,7 @@ const headerWidthSize = Dimensions.get('window').width*0.755
                 onChangeText={setNovoProduto} 
                 value={novoProduto} 
                 style={{backgroundColor:"#eee",alignContent:'center', width:Dimensions.get('screen').width*0.70, paddingLeft:10,height:30}} /> */}
-              <TouchableOpacity style={{backgroundColor: colorButtonTextInput, height:30, width:Dimensions.get('window').width*0.05, justifyContent:'center', alignItems:'center'}} onPress={pickerAddButton}><Text>+</Text></TouchableOpacity>
+              <TouchableOpacity style={{backgroundColor: colorButtonTextInput, height:Dimensions.get('window').height*0.07, width:Dimensions.get('window').width*0.08, justifyContent:'center', alignItems:'center'}} onPress={pickerAddButton}><Icon name="plus" size={15} color="#fff" /></TouchableOpacity>
               </View>
               {/* add aqui as coisas da conta que puxar do cliente */}
               
@@ -352,7 +353,7 @@ const headerWidthSize = Dimensions.get('window').width*0.755
 
               <Picker
               mode={'dropdown'}
-              style={{width:Dimensions.get('window').width*0.64}}
+              style={{width:Dimensions.get('window').width*0.47 , backgroundColor:"#eee", height:Dimensions.get('window').height*0.07,}}
         selectedValue={formaDePagamento}
         onValueChange={(itemValue, itemIndex) =>
           setFormaDePagamento(itemValue)
@@ -362,17 +363,15 @@ const headerWidthSize = Dimensions.get('window').width*0.755
             })}
         
       </Picker>
-                {/* <TextInput 
-                  autoCapitalize={'none'} 
-                  placeholder='adicione a forma de pagamento' 
-                  onChangeText={setFormaDePagamento} 
-                  value={formaDePagamento} 
-                  style={{backgroundColor:"#eee", width:Dimensions.get('screen').width*0.5, paddingLeft:10,height:30}} />
-                */}
+
                 <TouchableOpacity 
-                  style={{backgroundColor: color, height:30, width:Dimensions.get('window').width*0.22, justifyContent:'center', alignItems:'center', marginLeft:13}} 
+                  style={{backgroundColor: color, height:Dimensions.get('window').height*0.07, width:Dimensions.get('window').width*0.25, justifyContent:'center', alignItems:'center', marginLeft:13}} 
                   onPress={pagarAConta}>
+                    <View style={{flexDirection:'row', justifyContent:'center', alignContent:'center', alignItems:'center', alignSelf:'center',}}>
+
+                    <Icon name="money" size={30} color="#fff" style={{marginRight:10,}} />
                   <Text style={styles.textStyle}>PAGAR</Text>
+                    </View>
                 </TouchableOpacity> 
               </View>
               <View style={{width:Dimensions.get('window').width*0.8, marginBottom:10, marginTop:20,flexDirection:'row', justifyContent:'space-around'}}>
@@ -507,7 +506,8 @@ const styles = StyleSheet.create({
     textStyle: {
       color: "white",
       fontWeight: "bold",
-      textAlign: "center"
+      textAlign: "center",
+      alignContent:'center',
     },
     modalText: {
       marginBottom: 15,

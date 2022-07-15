@@ -11,11 +11,12 @@ import {
  Keyboard,
 } from 'react-native';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const myIcon = <Icon name="cog" size={30} color="#999" />;
 import { UserContext } from './UserContext';
  
 
-
-//  const ip = '192.168.0.17:3001'
 const ip = "limitless-lowlands-68334.herokuapp.com" 
 export default function LoginScreen({navigation}) {
   
@@ -26,21 +27,21 @@ const [password,setPassword] = useState("")
 
  
 const loginButton = () =>{
-   console.warn(user,password)
+  //  console.warn(user,password)
  
 // as vezes o ip muda
     axios.post(`https://${ip}/login`, {
         username:user,
-        password:password
+        password:password, 
     })
     .then(function (response) {
-      console.log(response.data)
+      // console.log(response.data)
         if (response.data.auth){
             setToken(response.data.token)
             navigation.navigate("Home")
-            // redirect to main page / home page whatever
+            // redirect to main page
         }
-        // console.warn(response.data.token);
+       
       })
       .catch(function (error) {
       alert("Login inválido")
@@ -66,8 +67,23 @@ const loginButton = () =>{
            <Text style={styles.loginTitleText}>Login</Text>
            <View style={styles.hr}></View>
            <View style={styles.inputBox}>
-             <Text style={styles.inputLabel}>Usuário</Text>
- 
+            {/* {myIcon}
+            <Icon name="unlock" size={30} color="#999" />
+
+            <Icon name="trash" size={30} color="#999" />
+            <Icon name="server" size={30} color="#999" />
+            <Icon name="refresh" size={30} color="#999" />
+            <Icon name="save" size={30} color="#999" />
+            <Icon name="qrcode" size={30} color="#999" />
+            <Icon name="print" size={30} color="#999" />
+            <Icon name="plus" size={30} color="#999" />
+            <Icon name="pencil" size={30} color="#999" />
+            <Icon name="lock" size={30} color="#999" />
+            <Icon name="money" size={30} color="#999" /> */}
+            <View style={{flexDirection:'row'}}>
+            <Icon name="user" size={20} color="#999" />
+             <Text style={styles.inputLabel}> Usuário</Text>
+            </View>
              
 
 
@@ -81,7 +97,10 @@ const loginButton = () =>{
             
            </View>
            <View style={styles.inputBox}>
-             <Text style={styles.inputLabel}>Senha</Text>
+           <View style={{flexDirection:'row'}}>
+             <Icon name="lock" size={20} color="#999" />
+             <Text style={styles.inputLabel}> Senha</Text>
+             </View>
              <TextInput
                style={styles.input}
                autoCapitalize={'none'}
